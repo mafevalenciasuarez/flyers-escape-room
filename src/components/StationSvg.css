@@ -1,0 +1,38 @@
+.station-svg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.station-svg .station-light-dark {
+  filter: var(--st-dim);
+  pointer-events: none;
+}
+
+.station-svg [data-st^='light-'] {
+  filter: var(--st-glow);
+}
+
+.station-svg [data-st^='focus-'] {
+  opacity: 0;
+  pointer-events: none;
+  fill: none;
+}
+
+.station-svg [data-st^='zone-'] {
+  fill: var(--zone-fill, #ffffff);
+  opacity: 0;
+  pointer-events: all;
+  transition: opacity var(--zone-fade, 600ms);
+}
+
+/* The intro station is scenery. Zones must not sit on top of Start. */
+.station-intro [data-st^='zone-'],
+.station-intro [data-st^='focus-'] {
+  pointer-events: none;
+}
+
+.space-scene .station-svg {
+  pointer-events: none;
+}

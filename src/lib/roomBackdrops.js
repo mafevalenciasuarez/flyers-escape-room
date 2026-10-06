@@ -1,0 +1,134 @@
+import {
+  messageRoomMarkup,
+  SCREEN_GLOW_COLOR,
+  SCREEN_GLOW_BLUR,
+  LIGHT_GLOW_COLOR,
+  LIGHT_GLOW_BLUR,
+  LIGHT_GLOW_SPREAD,
+  LAMP_GLOW_COLOR,
+  LAMP_GLOW_BLUR,
+  LAMP_GLOW_SPREAD,
+} from './messageRoomSvg.js';
+import { engineRoomMarkup } from './engineRoomSvg.js';
+import {
+  ENGINE_CORE_COLOR,
+  ENGINE_CORE_BLUR,
+  ENGINE_CORE_SPREAD,
+  ENGINE_LIGHT_COLOR,
+  ENGINE_LIGHT_BLUR,
+  ENGINE_LIGHT_SPREAD,
+  ENGINE_SCREEN_COLOR,
+  ENGINE_SCREEN_BLUR,
+  ENGINE_SCREEN_SPREAD,
+} from './engineRoomSvg.js';
+
+// One entry per room that has a drawing. Other rooms stay on the plain page.
+export const roomBackdrops = {
+  room1: {
+    svg: messageRoomMarkup,
+    ids: ['screen-glow', 'indicator-light1', 'indicator-light2', 'indicator-light3', 'porthole-space', 'ceiling-lamp-glow'],
+    // Any clip in the room drives data-audio. Values match the Room 1 stylesheet.
+    audio: 'any',
+    idle: { screen: 0.25, lights: 0.9, lightLow: 0.9, lightHigh: 1, breathe: '5s', breatheStep: '0.8s' },
+    playing: {
+      rise: '400ms',
+      pulseLow: 0.75,
+      pulseHigh: 1,
+      pulse: '1.6s',
+      seq: '2.4s',
+      seqStep: '0.4s',
+      seqLow: 0.5,
+      seqHigh: 1,
+      return: '600ms',
+    },
+    staticValues: { screen: 0.3, lamp: 0.85, lights: 0.55, screenOn: 0.8, lightsOn: 0.85 },
+    filters: {
+      screen: { color: SCREEN_GLOW_COLOR, blur: SCREEN_GLOW_BLUR, spread: 1.5 },
+      light: { color: LIGHT_GLOW_COLOR, blur: LIGHT_GLOW_BLUR, spread: LIGHT_GLOW_SPREAD },
+      lamp: { color: LAMP_GLOW_COLOR, blur: LAMP_GLOW_BLUR, spread: LAMP_GLOW_SPREAD },
+    },
+    cssVars: {
+      '--glow-idle': '0.25',
+      '--light-idle': '0.9',
+      '--light-low': '0.9',
+      '--light-high': '1',
+      '--breathe-dur': '5s',
+      '--breathe-step': '0.8s',
+      '--screen-rise': '400ms',
+      '--pulse-low': '0.75',
+      '--pulse-high': '1',
+      '--pulse-dur': '1.6s',
+      '--seq-dur': '2.4s',
+      '--seq-step': '0.4s',
+      '--seq-low': '0.5',
+      '--seq-high': '1',
+      '--return-dur': '600ms',
+      '--still-glow': '0.3',
+      '--still-lamp': '0.85',
+      '--still-light': '0.55',
+      '--still-glow-on': '0.8',
+      '--still-light-on': '0.85',
+      '--room-fade': '400ms',
+    },
+  },
+  room2: {
+    svg: engineRoomMarkup,
+    ids: ['engine-core-glow', 'screen-glow', 'indicator-light1', 'indicator-light2', 'indicator-light3'],
+    // Only the repair manual turns the engine effects on.
+    audio: 'r2_manual',
+    idle: { core: 0.25, coreLow: 0.2, coreHigh: 0.4, coreBreathe: '6s', lights: 0.5, lightLow: 0.4, lightHigh: 0.65, breathe: '5s', breatheStep: '0.8s', screen: 0.2 },
+    playing: {
+      rise: '400ms',
+      pulseLow: 0.75,
+      pulseHigh: 1,
+      pulse: '1.8s',
+      seq: '2.4s',
+      seqStep: '0.4s',
+      seqLow: 0.5,
+      seqHigh: 1,
+      return: '600ms',
+      screen: 0.2,
+    },
+    staticValues: { core: 0.3, screen: 0.2, lights: 0.55, coreOn: 0.85, lightsOn: 0.85 },
+    filters: {
+      core: { color: ENGINE_CORE_COLOR, blur: ENGINE_CORE_BLUR, spread: ENGINE_CORE_SPREAD },
+      screen: { color: ENGINE_SCREEN_COLOR, blur: ENGINE_SCREEN_BLUR, spread: ENGINE_SCREEN_SPREAD },
+      light: { color: ENGINE_LIGHT_COLOR, blur: ENGINE_LIGHT_BLUR, spread: ENGINE_LIGHT_SPREAD },
+    },
+    cssVars: {
+      '--core-idle': '0.25',
+      '--core-low': '0.2',
+      '--core-high': '0.4',
+      '--core-breathe': '6s',
+      '--core-rise': '400ms',
+      '--core-pulse-low': '0.75',
+      '--core-pulse-high': '1',
+      '--core-pulse': '1.8s',
+      '--light-idle': '0.5',
+      '--light-low': '0.4',
+      '--light-high': '0.65',
+      '--breathe-dur': '5s',
+      '--breathe-step': '0.8s',
+      '--seq-dur': '2.4s',
+      '--seq-step': '0.4s',
+      '--seq-low': '0.5',
+      '--seq-high': '1',
+      '--screen-glow-opacity': '0.2',
+      '--return-dur': '600ms',
+      '--still-core': '0.3',
+      '--still-screen': '0.2',
+      '--still-light': '0.55',
+      '--still-core-on': '0.85',
+      '--still-light-on': '0.85',
+      '--room-fade': '400ms',
+    },
+  },
+};
+
+export function roomBackdrop(roomId) {
+  return roomBackdrops[roomId] || null;
+}
+
+export function hasRoomArt(roomId) {
+  return Boolean(roomBackdrops[roomId]);
+}

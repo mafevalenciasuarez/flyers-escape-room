@@ -1,0 +1,37 @@
+{
+  "name": "flyers-escape-room",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Radio Silence on Space Station Alpha - a Cambridge A2 Flyers digital escape room",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "extract-wordlist": "node scripts/extract-wordlist.mjs",
+    "audio-scripts": "node scripts/build-audio-scripts.mjs",
+    "check-content": "node scripts/check-content.mjs",
+    "check-vocab": "node scripts/check-vocab.mjs",
+    "check-clues": "node scripts/check-clues.mjs",
+    "check-svg": "node scripts/check-svg-ids.mjs",
+    "check-all": "npm run check-content && npm run check-vocab && npm run check-clues && npm run check-svg"
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible": "^5.3.0",
+    "@fontsource/lexend": "^5.3.0",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^25.0.1",
+    "pdfjs-dist": "^4.10.38",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9"
+  }
+}

@@ -1,0 +1,131 @@
+// Room 2 - Engine Room (spec name: Engine Workshop)
+// Dimension: Inclusion. Skill: Reading. Same questions in every reading mode.
+// DRAFT: waiting for teacher approval of language level.
+
+export default {
+  id: 'room2',
+  order: 2,
+  name: 'Engine Room',
+  specName: 'Engine Workshop',
+  dimension: 'Inclusion',
+  skill: 'reading',
+  icon: 'engine',
+  prize: { id: 'careful-eyes', name: 'Careful Eyes', icon: 'eye' },
+  intro: 'Read how to repair the engine. Choose how you want to read.',
+  introEs: 'Lee cómo reparar el motor. Elige cómo quieres leer.',
+  helpCostsPoints: true,
+  targetMinutes: 7,
+  clue: {
+    type: 'word',
+    value: 'MOON',
+    label: 'MOON',
+    sourceItem: 'r2_q3',
+    evidence: 'MOON',
+  },
+  reading: {
+    title: 'How to repair the engine',
+    audio: 'r2_manual',
+    modes: [
+      { id: 'text', label: 'Read', labelEs: 'Solo texto', icon: 'text' },
+      { id: 'pictures', label: 'Read and look', labelEs: 'Texto y dibujos', icon: 'picture' },
+      { id: 'listen', label: 'Listen', labelEs: 'Escuchar', icon: 'headphones' },
+      { id: 'listen-highlight', label: 'Listen and read', labelEs: 'Escuchar y leer con palabras marcadas', icon: 'highlight' },
+    ],
+    steps: [
+      {
+        id: 's1',
+        text: 'First, turn off the engine. Then wait for five minutes, because the engine is very hot.',
+        image: 'r2_step1',
+        highlight: ['turn off', 'five minutes', 'hot'],
+      },
+      {
+        id: 's2',
+        text: 'Next, open the small metal door on the left. Don\'t open the big door on the right!',
+        image: 'r2_step2',
+        highlight: ['small metal door', 'left'],
+      },
+      {
+        id: 's3',
+        text: 'Inside, you can see three pieces of plastic: a blue one, a green one and a yellow one. The broken piece is the yellow one.',
+        image: 'r2_step3',
+        highlight: ['three pieces of plastic', 'broken', 'yellow'],
+      },
+      {
+        id: 's4',
+        text: 'Take out the broken piece and put the new piece in its place.',
+        highlight: ['take out', 'new piece'],
+      },
+      {
+        id: 's5',
+        text: 'Close the door and turn on the engine. When the engine works, the screen shows a secret word: MOON.',
+        highlight: ['turn on', 'screen', 'MOON'],
+      },
+    ],
+  },
+  items: [
+    {
+      id: 'r2_q1',
+      type: 'choice',
+      skill: 'reading',
+      instruction: 'Read and choose. What must you do first?',
+      instructionEs: 'Lee y elige. ¿Qué tienes que hacer primero?',
+      options: [
+        { id: 'a', text: 'Turn off the engine.' },
+        { id: 'b', text: 'Open the small door.' },
+        { id: 'c', text: 'Take out the yellow piece.' },
+      ],
+      answer: 'a',
+      why: 'Yes! Step 1 says: "First, turn off the engine."',
+      hints: [
+        'Read step 1 again.',
+        'Look for the word "First".',
+        'Read the step with "Look here" again, slowly.',
+      ],
+      highlightStepOnHint: { 3: 's1' },
+      words: ['first', 'turn off', 'engine'],
+    },
+    {
+      id: 'r2_q2',
+      type: 'choice',
+      skill: 'reading',
+      instruction: 'Read and choose. Which piece is broken?',
+      instructionEs: 'Lee y elige. ¿Qué pieza está rota?',
+      options: [
+        { id: 'a', text: 'The yellow piece.' },
+        { id: 'b', text: 'The blue piece.' },
+        { id: 'c', text: 'The green piece.' },
+      ],
+      answer: 'a',
+      why: 'Yes! Step 3 says: "The broken piece is the yellow one."',
+      hints: [
+        'Read step 3 again.',
+        'Look for the word "broken".',
+        'Read the step with "Look here" again, slowly.',
+      ],
+      highlightStepOnHint: { 3: 's3' },
+      words: ['broken', 'piece', 'plastic'],
+    },
+    {
+      id: 'r2_q3',
+      type: 'choice',
+      skill: 'reading',
+      instruction: 'Read and choose. What word does the screen show?',
+      instructionEs: 'Lee y elige. ¿Qué palabra muestra la pantalla?',
+      layout: 'big-text',
+      options: [
+        { id: 'a', text: 'MOON' },
+        { id: 'b', text: 'ROOM' },
+        { id: 'c', text: 'MOUTH' },
+      ],
+      answer: 'a',
+      why: 'Yes! Step 5 says: "the screen shows a secret word: MOON."',
+      hints: [
+        'Read step 5 again.',
+        'Look for the word "screen".',
+        'Read the step with "Look here" again, slowly.',
+      ],
+      highlightStepOnHint: { 3: 's5' },
+      words: ['screen', 'secret', 'moon'],
+    },
+  ],
+};

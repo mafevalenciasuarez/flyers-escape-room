@@ -1,0 +1,131 @@
+/* Pip heads (src/assets/svg/pip). Only transform and opacity animate; filters are static. */
+.pip {
+  --pip-md-width: 84px;
+  --pip-sm-width: 52px;
+  --pip-float-y: -8px;
+  --pip-float-dur: 3.8s;
+  --pip-swap-dur: 180ms;
+  --pip-swap-scale: 0.97;
+  --pip-mint: #a8f5e2;
+  --pip-mint-soft: rgba(168, 245, 226, 0.55);
+  --pip-warm: #ffc857;
+  --pip-warm-soft: rgba(255, 200, 87, 0.6);
+  --pip-face-dur: 3.2s;
+  --pip-face-min: 0.8;
+  --pip-ring-dur: 2.6s;
+  --pip-ring-min: 0.7;
+  --pip-ring-squash: 0.96;
+  --pip-ring-stretch: 1.04;
+  --pip-antenna-dur: 2.1s;
+  --pip-antenna-min: 0.65;
+  --pip-bulb-pop-dur: 450ms;
+  --pip-bulb-dur: 2.4s;
+  --pip-bulb-min: 0.85;
+  --bulb-glow: 1;
+  --pip-dot-dur: 1.2s;
+  --pip-dot-rise: -6px;
+  --pip-dot-min: 0.35;
+}
+
+.pip-avatar { flex: none; display: block; width: var(--pip-md-width); }
+.pip-sm .pip-avatar { width: var(--pip-sm-width); }
+.pip-float, .pip-swap { display: block; }
+.pip-swap svg, .pip-legacy { display: block; width: 100%; height: auto; overflow: visible; }
+.pip-legacy { color: var(--text); }
+
+.pip [data-pip] { transform-box: fill-box; transform-origin: center; }
+
+.pip [data-pip='eyes-mouth'] {
+  filter: drop-shadow(0 0 3px var(--pip-mint)) drop-shadow(0 0 10px var(--pip-mint-soft));
+}
+.pip [data-pip='ring'],
+.pip [data-pip='antenna-light'] {
+  filter: drop-shadow(0 0 3px var(--pip-warm)) drop-shadow(0 0 9px var(--pip-warm-soft));
+}
+.pip [data-pip='bulb'] {
+  filter:
+    drop-shadow(0 0 4px rgba(255, 200, 87, var(--bulb-glow)))
+    drop-shadow(0 0 14px rgba(255, 200, 87, calc(var(--bulb-glow) * 0.6)));
+}
+
+/* Face swap: the keyed wrapper remounts on every mood change. */
+.pip:not(.is-static) .pip-swap { animation: pip-swap var(--pip-swap-dur) ease-out both; }
+
+/* The one animated Pip on screen. */
+.pip:not(.is-static):not(.is-still) .pip-float {
+  animation: pip-float var(--pip-float-dur) ease-in-out infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip='eyes-mouth'] {
+  animation: pip-face-breathe var(--pip-face-dur) ease-in-out infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip='ring'] {
+  animation: pip-ring var(--pip-ring-dur) ease-in-out infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip='antenna-light'] {
+  animation: pip-antenna var(--pip-antenna-dur) ease-in-out infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip='bulb'] {
+  animation:
+    pip-bulb-pop var(--pip-bulb-pop-dur) ease-out both,
+    pip-bulb-breathe var(--pip-bulb-dur) ease-in-out var(--pip-bulb-pop-dur) infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip^='dot'] {
+  animation: pip-dot var(--pip-dot-dur) ease-in-out infinite;
+}
+.pip:not(.is-static):not(.is-still) [data-pip='dot2'] { animation-delay: 0.2s; }
+.pip:not(.is-static):not(.is-still) [data-pip='dot3'] { animation-delay: 0.4s; }
+
+@keyframes pip-swap {
+  from { opacity: 0; transform: scale(var(--pip-swap-scale)); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pip-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(var(--pip-float-y)); }
+}
+@keyframes pip-face-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: var(--pip-face-min); }
+}
+@keyframes pip-ring {
+  0%, 100% { opacity: 1; transform: scaleX(var(--pip-ring-stretch)); }
+  50% { opacity: var(--pip-ring-min); transform: scaleX(var(--pip-ring-squash)); }
+}
+@keyframes pip-antenna {
+  0%, 100% { opacity: 1; }
+  50% { opacity: var(--pip-antenna-min); }
+}
+@keyframes pip-bulb-pop {
+  0% { opacity: 0; transform: scale(0.6); }
+  70% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes pip-bulb-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: var(--pip-bulb-min); }
+}
+@keyframes pip-dot {
+  0%, 100% { opacity: var(--pip-dot-min); transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(var(--pip-dot-rise)); }
+}
+
+/* Calm mode and reduced motion: everything visible, nothing moves. */
+.pip.is-static .pip-float,
+.pip.is-static .pip-swap,
+.pip.is-static [data-pip],
+.pip.is-still .pip-float,
+.pip.is-still [data-pip] {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pip .pip-float,
+  .pip .pip-swap,
+  .pip [data-pip] {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}

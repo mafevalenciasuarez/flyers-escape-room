@@ -1,0 +1,266 @@
+/* Welcome scene only. Times and positions live here so they can be tuned
+   without touching the component. */
+.space-scene {
+  --scene-bg: #192444;
+  --station-left: 4%;
+  --station-top: 12%;
+  /* The new art is taller (2120.85 x 1831.59). Keep it left of the title. */
+  --station-width: 34%;
+  --planet-in-delay: 0.2s;
+  --planet-in-dur: 2.6s;
+  --planet-ease: cubic-bezier(0.22, 0.8, 0.3, 1);
+  /* The planet art sits in the lower quarter of its viewBox, so a full-width
+     image still climbs over the lower text. Nudge the resting position down. */
+  --planet-rest: 72px;
+  --glow-fade-delay: 1.8s;
+  --glow-fade-dur: 1.8s;
+  --glow-breathe-delay: 3.6s;
+  --glow-breathe-dur: 6s;
+  --station-in-delay: 1.6s;
+  --station-in-dur: 1.6s;
+  --station-drift-delay: 3.2s;
+  --station-drift-dur: 8s;
+  --station-drift-y: 6px;
+  --station-drift-rot: 0.6deg;
+  --light-radio-delay: 5s;
+  --light-radio-dur: 5s;
+  --light-1-delay: 3.4s;
+  --light-1-dur: 4.6s;
+  --light-2-delay: 3.7s;
+  --light-2-dur: 4.8s;
+  --light-3-delay: 4.05s;
+  --light-3-dur: 5s;
+  --light-4-delay: 4.35s;
+  --light-4-dur: 4.7s;
+  --light-5-delay: 3.55s;
+  --light-5-dur: 5.4s;
+  --light-6-delay: 4.6s;
+  --light-6-dur: 4.6s;
+  --light-7-delay: 3.9s;
+  --light-7-dur: 5.2s;
+  --light-8-delay: 4.8s;
+  --light-8-dur: 4.6s;
+
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--scene-bg);
+}
+
+.starfield { position: absolute; inset: 0; }
+
+.star {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.2);
+  animation-name: star-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.star.is-calm {
+  transform: none;
+  animation-name: star-twinkle-calm;
+}
+
+.sparkle { display: block; }
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.2); }
+  50% { opacity: var(--peak, 0.8); transform: scale(1); }
+}
+
+@keyframes star-twinkle-calm {
+  0%, 100% { opacity: 0; }
+  50% { opacity: var(--peak, 0.3); }
+}
+
+.planet {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.planet-slide {
+  position: relative;
+  transform: translateY(100%);
+  animation: planet-in var(--planet-in-dur) var(--planet-ease) var(--planet-in-delay) forwards;
+}
+
+.planet-img,
+.planet-glow-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.planet-glow-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  animation: glow-fade var(--glow-fade-dur) linear var(--glow-fade-delay) forwards;
+}
+
+.planet-glow-breathe {
+  animation: glow-breathe var(--glow-breathe-dur) ease-in-out var(--glow-breathe-delay) infinite;
+}
+
+.planet-glow-img {
+  filter:
+    drop-shadow(0 0 6px rgba(142, 201, 255, 0.9))
+    drop-shadow(0 0 24px rgba(110, 180, 255, 0.55));
+}
+
+@keyframes planet-in {
+  to { transform: translateY(var(--planet-rest)); }
+}
+
+@keyframes glow-fade {
+  to { opacity: 1; }
+}
+
+@keyframes glow-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+.station {
+  position: absolute;
+  left: var(--station-left);
+  top: var(--station-top);
+  width: var(--station-width);
+}
+
+.station-enter {
+  opacity: 0;
+  transform: translate(-24px, -16px) scale(0.96);
+  animation: station-in var(--station-in-dur) ease-out var(--station-in-delay) forwards;
+}
+
+.station-drift {
+  transform-origin: 50% 40%;
+  animation: station-drift var(--station-drift-dur) ease-in-out var(--station-drift-delay) infinite;
+}
+
+.station-drift svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@keyframes station-in {
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes station-drift {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(calc(var(--station-drift-y) * -1)) rotate(calc(var(--station-drift-rot) * -1)); }
+  75% { transform: translateY(var(--station-drift-y)) rotate(var(--station-drift-rot)); }
+}
+
+/* Broken lights. Only the lit copy moves. The dark clone underneath stays put.
+   Each light dips at most twice a second, and the dips are at least 1s apart. */
+.space-scene[data-variant='broken'] [data-st^='light-'] {
+  animation-name: light-flicker;
+  animation-duration: var(--light-dur, 5s);
+  animation-delay: var(--light-delay, 3.4s);
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.space-scene[data-variant='broken'] [data-st='light-room1'] { --light-delay: var(--light-1-delay); --light-dur: var(--light-1-dur); }
+.space-scene[data-variant='broken'] [data-st='light-room2'] { --light-delay: var(--light-2-delay); --light-dur: var(--light-2-dur); }
+.space-scene[data-variant='broken'] [data-st='light-room3'] { --light-delay: var(--light-3-delay); --light-dur: var(--light-3-dur); }
+.space-scene[data-variant='broken'] [data-st='light-room4'] { --light-delay: var(--light-4-delay); --light-dur: var(--light-4-dur); }
+.space-scene[data-variant='broken'] [data-st='light-room5'] { --light-delay: var(--light-5-delay); --light-dur: var(--light-5-dur); }
+.space-scene[data-variant='broken'] [data-st='light-radio'] { --light-delay: var(--light-radio-delay); --light-dur: var(--light-radio-dur); }
+
+@keyframes light-flicker {
+  0% { opacity: 1; }
+  8% { opacity: 1; }
+  10% { opacity: 0.4; }
+  14% { opacity: 1; }
+  30% { opacity: 1; }
+  32% { opacity: 0.25; }
+  36% { opacity: 0.9; }
+  58% { opacity: 0.9; }
+  60% { opacity: 0.2; }
+  66% { opacity: 0.65; }
+  84% { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+/* Final frame. Calm mode and reduced motion share this class. */
+.space-scene.is-static .star {
+  animation: none;
+  opacity: 0.5;
+  transform: none;
+}
+
+.space-scene.is-static .planet-slide {
+  animation: none;
+  transform: translateY(var(--planet-rest));
+  opacity: 1;
+}
+
+.space-scene.is-static .station-enter {
+  animation: none;
+  transform: none;
+  opacity: 1;
+}
+
+.space-scene.is-static .planet-glow-fade,
+.space-scene.is-static .planet-glow-breathe,
+.space-scene.is-static .station-drift {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.space-scene.is-static[data-variant='broken'] [data-st^='light-'] {
+  animation: none;
+  opacity: 0;
+}
+
+/* CSS fallback for the same final frame. The global stylesheet already
+   cancels animations; these rules put the art where the animation would end. */
+@media (prefers-reduced-motion: reduce) {
+  .space-scene .star {
+    animation: none !important;
+    opacity: 0.5;
+    transform: none;
+  }
+
+  .space-scene .planet-slide {
+    animation: none !important;
+    transform: translateY(var(--planet-rest));
+    opacity: 1;
+  }
+
+  .space-scene .station-enter {
+    animation: none !important;
+    transform: none;
+    opacity: 1;
+  }
+
+  .space-scene .planet-glow-fade,
+  .space-scene .planet-glow-breathe,
+  .space-scene .station-drift {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .space-scene[data-variant='broken'] [data-st^='light-'] {
+    animation: none !important;
+    opacity: 0;
+  }
+}

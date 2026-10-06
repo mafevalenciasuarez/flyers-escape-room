@@ -1,0 +1,383 @@
+/* The map fills the space under the header. The page itself does not scroll. */
+.is-map {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.is-map .main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.screen-map {
+  flex: 1 1 auto;
+  min-height: 0;
+  --zone-fill: #ffd27a;
+  --zone-fade: 600ms;
+  --light-fade: 700ms;
+  --camera-dur: 900ms;
+  --camera-ease: cubic-bezier(0.22, 0.8, 0.3, 1);
+  --card-fill: #e4ecfb;
+  --map-sky: #192444;
+  position: relative;
+  z-index: 1;
+  color: #fff;
+}
+
+.map-sky {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #192444;
+  pointer-events: none;
+}
+
+.map-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+  gap: 1rem;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+}
+
+.map-station-panel {
+  container-type: size;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.map-station-cam {
+  /* 78% of the panel, but never so tall that a 1.2 zoom leaves the panel. */
+  width: 78%;
+  width: min(78cqw, calc(80cqh * 2120.85 / 1831.59));
+  transform-origin: 0 0;
+  transition: transform var(--camera-dur) var(--camera-ease);
+}
+
+.map-side-frame {
+  --side-fade: 2.4rem;
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-side {
+  --side-gap: 0.45rem;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--side-gap);
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.55) rgba(255, 255, 255, 0.08);
+}
+
+.map-side::-webkit-scrollbar {
+  width: 10px;
+}
+
+.map-side::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.map-side::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.45);
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.map-side::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.map-side-fade {
+  position: absolute;
+  left: 0;
+  right: 10px;
+  z-index: 2;
+  height: var(--side-fade);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.map-side-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, var(--map-sky) 0%, rgba(25, 36, 68, 0) 100%);
+}
+
+.map-side-fade-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, var(--map-sky) 0%, rgba(25, 36, 68, 0) 100%);
+}
+
+.map-side-frame.is-fade-top .map-side-fade-top,
+.map-side-frame.is-fade-bottom .map-side-fade-bottom {
+  opacity: 1;
+}
+
+.screen-map h1 {
+  color: #fff;
+  margin: 0;
+}
+
+.map-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen-map .room-card {
+  display: block;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.screen-map .room-card.is-next,
+.screen-map .room-card.is-done {
+  border: none;
+}
+
+.map-join {
+  display: block;
+  width: 4px;
+  height: 0.75rem;
+  margin-left: 1.5rem;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.map-join-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--zone-fill);
+  transform-origin: top center;
+  transform: scaleY(0);
+  transition: transform var(--zone-fade);
+}
+
+.map-join.is-on .map-join-fill {
+  transform: scaleY(1);
+}
+
+.map-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+  overflow: hidden;
+  font: inherit;
+  line-height: var(--lh);
+}
+
+.screen-map .room-card.is-next .map-card {
+  border-width: 4px;
+  border-color: var(--primary);
+}
+
+.screen-map .room-card.is-done .map-card {
+  border-color: var(--right);
+}
+
+.map-card[aria-disabled='true'] {
+  cursor: default;
+}
+
+.map-card-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--card-fill);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--zone-fade);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.map-card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.screen-map .room-num {
+  z-index: 1;
+}
+
+.map-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.map-lock-reason {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.map-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.screen-map .my-pieces {
+  margin-top: 0.4rem;
+  color: var(--text);
+}
+
+.screen-map [data-st^='light-'] {
+  transition: opacity var(--light-fade);
+}
+
+.screen-map [data-st^='light-'][data-state='off'] {
+  opacity: 0;
+}
+
+.screen-map [data-st^='light-'][data-state='on'] {
+  opacity: 1;
+}
+
+.screen-map [data-st^='zone-'][data-state='locked'],
+.screen-map [data-st^='zone-'][data-state='done'],
+.screen-map [data-st^='zone-'][data-state='ready'] {
+  opacity: 0;
+}
+
+.screen-map [data-st^='zone-'][data-state='locked'] {
+  cursor: default;
+}
+
+.screen-map [data-st^='zone-']:not([data-state='locked']) {
+  cursor: pointer;
+}
+
+.screen-map [data-st^='zone-'][data-state='active'] {
+  opacity: 0.22;
+}
+
+.screen-map [data-st^='zone-'][data-state='selected'] {
+  opacity: 0.38;
+}
+
+.screen-map:not(.is-static) [data-st^='zone-'][data-state='next'] {
+  animation: zone-pulse 3s ease-in-out infinite;
+}
+
+.screen-map.is-static [data-st^='zone-'][data-state='next'] {
+  animation: none;
+  opacity: 0.28;
+}
+
+.screen-map.is-static .map-station-cam,
+.screen-map.is-static .map-card-fill,
+.screen-map.is-static .map-join-fill,
+.screen-map.is-static [data-st^='zone-'],
+.screen-map.is-static [data-st^='light-'] {
+  transition: none;
+}
+
+@keyframes zone-pulse {
+  0%,
+  100% { opacity: 0.14; }
+  50% { opacity: 0.34; }
+}
+
+html[data-contrast='high'] .screen-map {
+  --card-fill: #222222;
+  --zone-fill: #ffff00;
+}
+
+@media (max-width: 900px) {
+  .is-map {
+    height: auto;
+    overflow: visible;
+  }
+
+  .is-map .main {
+    display: block;
+    overflow: visible;
+    padding-bottom: 3rem;
+  }
+
+  .screen-map {
+    flex: none;
+  }
+
+  .map-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .map-station-panel {
+    min-height: 0;
+    height: 40vh;
+  }
+
+  .map-side-frame,
+  .map-side {
+    height: auto;
+    max-height: none;
+  }
+
+  .map-side {
+    overflow: visible;
+  }
+
+  .map-side-fade {
+    display: none;
+  }
+}
+
+.screen-map.is-static .star {
+  animation: none;
+  opacity: 0.5;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen-map [data-st^='zone-'][data-state='next'] {
+    animation: none;
+    opacity: 0.28;
+  }
+
+  .screen-map .star {
+    animation: none !important;
+    opacity: 0.5;
+    transform: none;
+  }
+}

@@ -1,0 +1,168 @@
+.room-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .room-backdrop:not(.is-static) { animation: room-fade var(--room-fade, 400ms) ease both; }
+}
+.room-backdrop svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Room 1. These values are the ones already shipping. Do not retune them here. */
+.room-backdrop[data-room='room1'] [data-st='screen-glow'] { opacity: var(--glow-idle); }
+.room-backdrop[data-room='room1'] [data-st^='indicator-light'] { opacity: var(--light-idle); }
+
+.room-backdrop[data-room='room1']:not(.is-static) [data-st='screen-glow'] {
+  animation: screen-idle 3.2s ease-in-out infinite;
+}
+.room-backdrop[data-room='room1']:not(.is-static) [data-st='ceiling-lamp-glow'] {
+  animation: lamp-idle 3.6s ease-in-out infinite;
+}
+
+.room-backdrop[data-room='room1']:not(.is-static) [data-st='indicator-light1'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+}
+.room-backdrop[data-room='room1']:not(.is-static) [data-st='indicator-light2'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+  animation-delay: var(--breathe-step);
+}
+.room-backdrop[data-room='room1']:not(.is-static) [data-st='indicator-light3'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+  animation-delay: calc(var(--breathe-step) * 2);
+}
+
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='screen-glow'] {
+  animation: screen-rise var(--screen-rise) ease forwards, screen-pulse var(--pulse-dur) ease-in-out var(--screen-rise) infinite alternate;
+}
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='indicator-light1'],
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='indicator-light2'],
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='indicator-light3'] {
+  animation: light-seq var(--seq-dur) ease-in-out infinite;
+}
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='indicator-light2'] { animation-delay: var(--seq-step); }
+.room-backdrop[data-room='room1']:not(.is-static)[data-audio='playing'] [data-st='indicator-light3'] { animation-delay: calc(var(--seq-step) * 2); }
+
+.room-backdrop[data-room='room1']:not([data-audio='playing']) [data-st^='indicator-light'] {
+  transition: opacity var(--return-dur) ease;
+}
+
+.room-backdrop[data-room='room1'].is-static,
+.room-backdrop[data-room='room1'].is-static [data-st] {
+  animation: none;
+  transition: none;
+  opacity: 1;
+}
+.room-backdrop[data-room='room1'].is-static [data-st='screen-glow'] { opacity: var(--still-glow); }
+.room-backdrop[data-room='room1'].is-static [data-st='ceiling-lamp-glow'] { opacity: var(--still-lamp); }
+.room-backdrop[data-room='room1'].is-static [data-st^='indicator-light'] { opacity: var(--still-light); }
+.room-backdrop[data-room='room1'].is-static[data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-glow-on); }
+.room-backdrop[data-room='room1'].is-static[data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
+
+/* Room 2. Opacity only. The cabinet screen stays a faint glow and never shows a word. */
+.room-backdrop[data-room='room2'] [data-st='engine-core-glow'] { opacity: var(--core-idle); }
+.room-backdrop[data-room='room2'] [data-st^='indicator-light'] { opacity: var(--light-idle); }
+.room-backdrop[data-room='room2'] [data-st='screen-glow'] {
+  opacity: var(--screen-glow-opacity);
+  animation: none;
+}
+
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='engine-core-glow'] {
+  animation: core-breathe var(--core-breathe) ease-in-out infinite;
+}
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='indicator-light1'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+}
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='indicator-light2'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+  animation-delay: var(--breathe-step);
+}
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='indicator-light3'] {
+  animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
+  animation-delay: calc(var(--breathe-step) * 2);
+}
+
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='engine-core-glow'] {
+  animation: core-rise var(--core-rise) ease forwards, core-pulse var(--core-pulse) ease-in-out var(--core-rise) infinite alternate;
+}
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light1'],
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light2'],
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light3'] {
+  animation: light-seq var(--seq-dur) ease-in-out infinite;
+}
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light2'] { animation-delay: var(--seq-step); }
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light3'] { animation-delay: calc(var(--seq-step) * 2); }
+.room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='screen-glow'] {
+  opacity: var(--screen-glow-opacity);
+  animation: none;
+}
+
+.room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st='engine-core-glow'],
+.room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st^='indicator-light'] {
+  transition: opacity var(--return-dur) ease;
+}
+
+.room-backdrop[data-room='room2'].is-static,
+.room-backdrop[data-room='room2'].is-static [data-st] {
+  animation: none;
+  transition: none;
+  opacity: 1;
+}
+.room-backdrop[data-room='room2'].is-static [data-st='engine-core-glow'] { opacity: var(--still-core); }
+.room-backdrop[data-room='room2'].is-static [data-st='screen-glow'] { opacity: var(--still-screen); }
+.room-backdrop[data-room='room2'].is-static [data-st^='indicator-light'] { opacity: var(--still-light); }
+.room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st='engine-core-glow'] { opacity: var(--still-core-on); }
+.room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
+.room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+
+@keyframes room-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes screen-idle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+@keyframes lamp-idle {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+@keyframes light-breathe {
+  0%, 100% { opacity: var(--light-low); }
+  50% { opacity: var(--light-high); }
+}
+@keyframes screen-rise { from { opacity: var(--glow-idle); } to { opacity: var(--pulse-high); } }
+@keyframes screen-pulse { from { opacity: var(--pulse-low); } to { opacity: var(--pulse-high); } }
+@keyframes core-breathe {
+  0%, 100% { opacity: var(--core-low); }
+  50% { opacity: var(--core-high); }
+}
+@keyframes core-rise { from { opacity: var(--core-idle); } to { opacity: var(--core-pulse-high); } }
+@keyframes core-pulse { from { opacity: var(--core-pulse-low); } to { opacity: var(--core-pulse-high); } }
+@keyframes light-seq {
+  0%, 100% { opacity: var(--seq-low); }
+  45% { opacity: var(--seq-high); }
+  80% { opacity: var(--seq-low); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-backdrop,
+  .room-backdrop [data-st] {
+    animation: none !important;
+    transition: none !important;
+  }
+  .room-backdrop { opacity: 1; }
+  .room-backdrop[data-room='room1'] [data-st='screen-glow'] { opacity: var(--still-glow); }
+  .room-backdrop[data-room='room1'] [data-st='ceiling-lamp-glow'] { opacity: var(--still-lamp); }
+  .room-backdrop[data-room='room1'] [data-st^='indicator-light'] { opacity: var(--still-light); }
+  .room-backdrop[data-room='room1'][data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-glow-on); }
+  .room-backdrop[data-room='room1'][data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
+  .room-backdrop[data-room='room2'] [data-st='engine-core-glow'] { opacity: var(--still-core); }
+  .room-backdrop[data-room='room2'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+  .room-backdrop[data-room='room2'] [data-st^='indicator-light'] { opacity: var(--still-light); }
+  .room-backdrop[data-room='room2'][data-audio='playing'] [data-st='engine-core-glow'] { opacity: var(--still-core-on); }
+  .room-backdrop[data-room='room2'][data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
+  .room-backdrop[data-room='room2'][data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+}
