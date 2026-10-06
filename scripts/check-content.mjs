@@ -53,6 +53,55 @@ const extraFiles = fs.existsSync(audioDir)
   : [];
 for (const f of extraFiles) console.log(`  note: public/audio/${f} is not in the manifest (the game will not use it)`);
 
+const svgDir = path.join(root, 'src', 'assets', 'svg');
+function svgFiles(dir) {
+  const found = [];
+  for (const name of fs.readdirSync(dir)) {
+    const filePath = path.join(dir, name);
+    if (fs.statSync(filePath).isDirectory()) found.push(...svgFiles(filePath));
+    else found.push(filePath);
+  }
+  return found;
+}
+for (const filePath of svgFiles(svgDir)) {
+  const name = path.basename(filePath);
+  if (/\.svg\.svg$/i.test(name)) imageProblems.push(`SVG file has a double extension: ${name}`);
+}
+const requiredSvg = [
+  'garden-room-bg.svg',
+  'science-room-bg.svg',
+  'robot-room-bg.svg',
+  'radio-room-bg.svg',
+  'medal-bronze.svg',
+  'medal-silver.svg',
+  'medal-gold.svg',
+  'badge-garden-star.svg',
+  'stamp-earth.svg',
+  'postmark.svg',
+];
+for (const name of requiredSvg) {
+  const filePath = path.join(svgDir, name);
+  if (!fs.existsSync(filePath)) {
+    imageProblems.push(`missing src/assets/svg/${name}`);
+    continue;
+  }
+  const kb = fs.statSync(filePath).size / 1024;
+  const limit = /-room-bg\.svg$/.test(name) ? 400 : 30;
+  if (kb > limit) console.log(`  warn: src/assets/svg/${name} is ${Math.round(kb)} KB (above ${limit} KB)`);
+}
+
+const sfxDir = path.join(root, 'public', 'audio', 'sfx');
+const sfxFiles = ['click-sound.mp3', 'answer-correct.mp3', 'answer-error.mp3', 'room-end-screen.mp3'];
+for (const name of sfxFiles) {
+  const filePath = path.join(sfxDir, name);
+  if (!fs.existsSync(filePath)) {
+    console.log(`  warn: missing public/audio/sfx/${name}`);
+    continue;
+  }
+  const kb = fs.statSync(filePath).size / 1024;
+  if (kb > 60) console.log(`  warn: public/audio/sfx/${name} is ${Math.round(kb)} KB (above 60 KB)`);
+}
+
 if (broken.length) {
   console.log('\nProblems:');
   for (const b of broken) console.log(`  ${b}`);

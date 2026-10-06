@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { FINAL, ROOM_BY_ID } from '../content/index.js';
 import { useGame } from '../state/GameContext.jsx';
 import { pointsFor } from '../state/scoring.js';
 import { shuffle } from '../lib/util.js';
+import { roomBackdrop } from '../lib/roomBackdrops.js';
 import AudioPlayer from '../components/AudioPlayer.jsx';
+import RoomBackdrop from '../components/RoomBackdrop.jsx';
 import Icon from '../components/Icon.jsx';
 import PieceCard from '../components/PieceCard.jsx';
 import Pip from '../components/Pip.jsx';
@@ -127,8 +129,19 @@ function PlacePieces({ onDone }) {
 export default function RadioRoomScreen() {
   const { state, dispatch, t, es } = useGame();
   const rs = state.rooms.final;
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const playingIds = useRef(new Set());
+  const watchAudio = (id) => (playing) => {
+    const ids = playingIds.current;
+    if (playing) ids.add(id);
+    else ids.delete(id);
+    setAudioPlaying(ids.size > 0);
+  };
   if (!rs) return null;
   const item = FINAL.items[0];
+  const art = roomBackdrop('final');
+  const roomArt = Boolean(art) && !state.settings.contrast;
+  const repaired = FINAL.slots.every((slot) => state.placed[slot] === slot);
 
   let body;
   if (rs.phase === 'intro') {
@@ -136,7 +149,7 @@ export default function RadioRoomScreen() {
       <div className="room-intro">
         <Icon name="radio" size={64} />
         <Instruction icon="arrow" en={FINAL.intro} es={FINAL.introEs} />
-        <AudioPlayer clipId={FINAL.introAudio} unlimited label={FINAL.name} />
+        <AudioPlayer clipId={FINAL.introAudio} unlimited label={FINAL.name} onPlayingChange={watchAudio(FINAL.introAudio)} />
         <Button icon="arrow" en={t('start')} es={es('start')} className="btn-big" onClick={() => dispatch({ type: 'SET_PHASE', roomId: 'final', phase: 'place' })} />
       </div>
     );
@@ -147,6 +160,7 @@ export default function RadioRoomScreen() {
       <ChoiceItem
         key={item.id}
         item={item}
+        onPlayingChange={item.audio ? watchAudio(item.audio) : undefined}
         onDone={(r) => {
           const points = pointsFor(r, FINAL.helpCostsPoints);
           const firstTry = r.wrongs === 0 && r.helps === 0;
@@ -159,10 +173,11 @@ export default function RadioRoomScreen() {
 
   return (
     <section className="screen screen-room room-final" aria-labelledby="room-title">
+      {roomArt ? <RoomBackdrop roomId="final" audioPlaying={audioPlaying} sceneState={repaired ? 'repaired' : 'idle'} /> : null}
       <h1 id="room-title" className="room-title">
         <Icon name="radio" /> {FINAL.name}
       </h1>
-      {body}
+      {roomArt ? <div className="room-panel">{body}</div> : body}
     </section>
   );
 }

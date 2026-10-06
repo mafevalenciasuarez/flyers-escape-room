@@ -2,8 +2,8 @@
 // Dimension: Motivation. Skill: Reading and Writing.
 // Three paths with the same learning goal:
 //   easy     = choose from 3 words for every gap
-//   hard     = one word box for all gaps (with extra words)
-//   veryhard = write the word yourself
+//   hard     = one dropdown in each gap, options from the word box
+//   veryhard = write the word in the gap
 // DRAFT: waiting for teacher approval of language level.
 
 export default {

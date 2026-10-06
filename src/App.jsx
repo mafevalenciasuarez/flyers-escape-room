@@ -46,7 +46,7 @@ function Shell() {
   return (
     <div
       className={`app${state.screen === 'map' ? ' is-map' : ''}${
-        (state.screen === 'room' || state.screen === 'summary') && hasRoomArt(state.currentRoom) && !s.contrast ? ' is-room-art' : ''
+        (state.screen === 'room' || state.screen === 'summary' || state.screen === 'final') && hasRoomArt(state.currentRoom) && !s.contrast ? ' is-room-art' : ''
       }`}
     >
       <a className="skip-link" href="#main">

@@ -5,6 +5,7 @@ import { clearSaved } from '../state/storage.js';
 import { skillSummary, totalPoints, wordsToReview } from '../state/scoring.js';
 import AudioPlayer from '../components/AudioPlayer.jsx';
 import Icon from '../components/Icon.jsx';
+import PrizeGlyph from '../components/PrizeGlyph.jsx';
 import Pip from '../components/Pip.jsx';
 import { Button, Es } from '../components/Bilingual.jsx';
 
@@ -45,7 +46,7 @@ export default function EndScreen() {
           <ul className="prize-list">
             {prizes.map((p) => (
               <li key={p.id}>
-                <Icon name={p.icon} size={32} /> {p.name}
+                <PrizeGlyph prize={p} size={32} /> {p.name}
               </li>
             ))}
             {room3Path ? (

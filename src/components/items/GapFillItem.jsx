@@ -4,10 +4,12 @@ import { normalizeAnswer, shuffle } from '../../lib/util.js';
 import Feedback from '../Feedback.jsx';
 import Icon from '../Icon.jsx';
 import { Button, Es, Instruction } from '../Bilingual.jsx';
+import { pulseReward } from '../../lib/roomFx.js';
 
 // One-word gaps. mode: "choice" (3 words per gap), "bank" (one word box), "type" (write it).
+// inline puts the bank menu or the writing box inside the sentence. Choice stays under it.
 // Right gaps lock; wrong gaps get their own help ladder. Never shows the answer.
-export default function GapFillItem({ item, mode = item.mode || 'type', onDone, title }) {
+export default function GapFillItem({ item, mode = item.mode || 'type', onDone, title, wrapPassage, inline = false }) {
   const { t, es, dispatch, sound } = useGame();
   const gapIds = item.parts.filter((p) => typeof p === 'object').map((p) => p.gap);
   const [values, setValues] = useState({});
@@ -62,7 +64,12 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
     setLevels(nextLevels);
     setCounts((c) => ({ ...c, wrongs: c.wrongs + newWrongs }));
     setLastWhy(newWrongs ? null : why);
-    sound(newWrongs ? 'wrong' : 'right');
+    const finished = gapIds.every((id) => nextSolved[id]);
+    if (newWrongs) sound('wrong');
+    else if (finished) {
+      sound('right');
+      pulseReward();
+    }
   };
 
   const askHelp = () => {
@@ -73,13 +80,57 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
 
   const filledOpen = gapIds.some((id) => !solved[id] && (values[id] || '').trim());
 
+  const inSentence = inline && (mode === 'bank' || mode === 'type');
+
+  const renderInlineControl = (id) => {
+    const n = gapNumber(id);
+    const label = `${n}`;
+    if (mode === 'type') {
+      return (
+        <input
+          id={`gap-${item.id}-${id}`}
+          aria-label={label}
+          data-gap={id}
+          className="gap-input"
+          type="text"
+          autoComplete="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          value={values[id] || ''}
+          onChange={(e) => setValue(id, e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') check();
+          }}
+          aria-invalid={wrong[id] || undefined}
+        />
+      );
+    }
+    return (
+      <select
+        id={`gap-${item.id}-${id}`}
+        aria-label={label}
+        data-gap={id}
+        className="gap-select"
+        value={values[id] || ''}
+        onChange={(e) => setValue(id, e.target.value)}
+        aria-invalid={wrong[id] || undefined}
+      >
+        <option value="">—</option>
+        {shuffled.__bank.map((w) => (
+          <option key={w} value={w}>{w}</option>
+        ))}
+      </select>
+    );
+  };
+
   const renderGapInline = (id) => {
     const n = gapNumber(id);
     const v = values[id];
+    const open = inSentence && !solved[id];
     return (
       <span key={id} className={`gap ${solved[id] ? 'is-right' : ''} ${wrong[id] ? 'is-wrong' : ''}`}>
         <span className="gap-num" aria-hidden="true">{n}</span>
-        <span className="gap-value">{v || '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0'}</span>
+        {open ? renderInlineControl(id) : <span className="gap-value">{v || '\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0'}</span>}
         {solved[id] ? <Icon name="check" size={18} /> : null}
         {wrong[id] ? <Icon name="cross" size={18} /> : null}
       </span>
@@ -148,31 +199,35 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
     );
   };
 
+  const passage = (
+    <div className="reading-card">
+      {title || item.title ? <h3>{title || item.title}</h3> : null}
+      <p className="gap-text">
+        {item.parts.map((p, i) =>
+          typeof p === 'string' ? (
+            <span key={i}>{p}</span>
+          ) : (
+            <span key={i}>
+              {renderGapInline(p.gap)}
+              {p.base ? <span className="gap-base"> ({p.base})</span> : null}
+            </span>
+          )
+        )}
+      </p>
+    </div>
+  );
+
   return (
     <div className="item item-gapfill">
       <Instruction icon="text" en={item.instruction} es={item.instructionEs} as="h2" />
-      <div className="reading-card">
-        {title || item.title ? <h3>{title || item.title}</h3> : null}
-        <p className="gap-text">
-          {item.parts.map((p, i) =>
-            typeof p === 'string' ? (
-              <span key={i}>{p}</span>
-            ) : (
-              <span key={i}>
-                {renderGapInline(p.gap)}
-                {p.base ? <span className="gap-base"> ({p.base})</span> : null}
-              </span>
-            )
-          )}
-        </p>
-      </div>
-      {mode === 'bank' ? (
+      {wrapPassage ? wrapPassage(passage) : passage}
+      {mode === 'bank' && !inSentence ? (
         <p className="word-box-title">
           <Icon name="words" /> {t('wordBox')}
           <Es>{es('wordBox')}</Es>
         </p>
       ) : null}
-      <div className="gap-controls">{gapIds.map(renderControl)}</div>
+      {inSentence ? null : <div className="gap-controls">{gapIds.map(renderControl)}</div>}
 
       <Feedback
         status={allSolved ? 'right' : Object.values(wrong).some(Boolean) ? 'wrong' : lastWhy ? 'right' : null}

@@ -6,6 +6,30 @@ import Feedback from '../Feedback.jsx';
 import Icon from '../Icon.jsx';
 import GapFillItem from './GapFillItem.jsx';
 import { Button, Es, Instruction } from '../Bilingual.jsx';
+import stampEarth from '../../assets/svg/stamp-earth.svg';
+import postmarkUrl from '../../assets/svg/postmark.svg';
+
+function PostcardMarks() {
+  return (
+    <div className="postcard-marks" aria-hidden="true">
+      <img className="postcard-postmark" src={postmarkUrl} alt="" width={74} height={48} />
+      <img className="postcard-stamp" src={stampEarth} alt="" width={51} height={64} />
+    </div>
+  );
+}
+
+function PostcardShell({ opening, closing, children }) {
+  return (
+    <div className="postcard">
+      <div className="postcard-head">
+        <p className="postcard-line">{opening}</p>
+        <PostcardMarks />
+      </div>
+      {children}
+      <p className="postcard-line">{closing}</p>
+    </div>
+  );
+}
 
 function boxWordsUsed(text, box) {
   const lower = ` ${text.toLowerCase().replace(/[^a-z' ]/g, ' ')} `;
@@ -50,8 +74,7 @@ function FreePostcard({ item, onDone }) {
           ))}
         </ul>
       </div>
-      <div className="postcard">
-        <p className="postcard-line">{item.opening}</p>
+      <PostcardShell opening={item.opening} closing={item.closing}>
         <label htmlFor={`free-${item.id}`} className="visually-hidden">
           {free.instruction}
         </label>
@@ -64,8 +87,7 @@ function FreePostcard({ item, onDone }) {
           disabled={status === 'right'}
           spellCheck="false"
         />
-        <p className="postcard-line">{item.closing}</p>
-      </div>
+      </PostcardShell>
       <p className="counters">
         {t('wordCount', { n: words })} · {t('boxWordsUsed', { n: used.length })}
       </p>
@@ -93,16 +115,27 @@ function FreePostcard({ item, onDone }) {
 // the very hard path writes freely and is checked for length and box words.
 export default function PostcardItem({ item, path, onDone }) {
   const framed = useMemo(() => {
-    const parts = [`${item.opening} `];
+    const parts = [];
     const gaps = {};
     item.frames.forEach((f, i) => {
       parts.push(`${i ? ' ' : ''}${f.before}`, { gap: f.id }, f.after);
       gaps[f.id] = { answers: f.answers, options: f.options, why: f.why, hints: f.hints };
     });
-    parts.push(` ${item.closing}`);
     return { ...item, parts, gaps, bank: item.bank, title: null };
   }, [item]);
 
   if (path === 'veryhard') return <FreePostcard item={item} onDone={onDone} />;
-  return <GapFillItem item={framed} mode={path === 'hard' ? 'bank' : 'choice'} onDone={onDone} />;
+  return (
+    <GapFillItem
+      item={framed}
+      mode={path === 'hard' ? 'bank' : 'choice'}
+      inline={path === 'hard'}
+      onDone={onDone}
+      wrapPassage={(passage) => (
+        <PostcardShell opening={item.opening} closing={item.closing}>
+          {passage}
+        </PostcardShell>
+      )}
+    />
+  );
 }

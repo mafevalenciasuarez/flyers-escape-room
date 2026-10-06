@@ -14,6 +14,11 @@ import OrderItem from '../components/items/OrderItem.jsx';
 import DilemmaItem from '../components/items/DilemmaItem.jsx';
 import PostcardItem from '../components/items/PostcardItem.jsx';
 import ReadingPanel, { ModePicker } from './ReadingPanel.jsx';
+import medalBronze from '../assets/svg/medal-bronze.svg';
+import medalSilver from '../assets/svg/medal-silver.svg';
+import medalGold from '../assets/svg/medal-gold.svg';
+
+const PATH_MEDALS = { bronze: medalBronze, silver: medalSilver, gold: medalGold };
 
 function PathPicker({ room, value, onChange }) {
   const { t, es } = useGame();
@@ -33,9 +38,8 @@ function PathPicker({ room, value, onChange }) {
             aria-pressed={value === p.id}
             onClick={() => onChange(p.id)}
           >
-            <span className="medal" aria-hidden="true">
-              <Icon name="medal" size={44} />
-            </span>
+            <img className="path-medal" src={PATH_MEDALS[p.medal]} alt="" width={53} height={80} aria-hidden="true" />
+            {value === p.id ? <Icon name="check" className="path-tick" /> : null}
             <strong>
               {p.label}
               <Es>{p.labelEs}</Es>
@@ -77,7 +81,9 @@ export default function RoomScreen() {
     if (playing) ids.add(id);
     else ids.delete(id);
     setAudioPlaying(ids.size > 0);
-    setManualPlaying(Boolean(room?.reading?.audio) && ids.has(room.reading.audio));
+    const clip = roomBackdrop(room?.id);
+    const effectClip = clip?.audio && clip.audio !== 'any' ? clip.audio : null;
+    setManualPlaying(Boolean(effectClip) && ids.has(effectClip));
   };
 
   useEffect(() => {
@@ -157,14 +163,22 @@ export default function RoomScreen() {
         break;
       case 'gapfill': {
         const mode = item.mode || (rs.path === 'easy' ? 'choice' : rs.path === 'hard' ? 'bank' : 'type');
-        itemView = <GapFillItem key={`${item.id}-${mode}`} item={item} mode={mode} onDone={onDone} />;
+        itemView = (
+          <GapFillItem
+            key={`${item.id}-${mode}`}
+            item={item}
+            mode={mode}
+            inline={rs.path === 'hard' || rs.path === 'veryhard'}
+            onDone={onDone}
+          />
+        );
         break;
       }
       case 'order':
         itemView = <OrderItem key={item.id} item={item} variantId={rs.variants?.[item.id]} onDone={onDone} />;
         break;
       case 'dilemma':
-        itemView = <DilemmaItem key={item.id} item={item} onDone={onDone} />;
+        itemView = <DilemmaItem key={item.id} item={item} onDone={onDone} onPlayingChange={item.audio ? watchAudio(item.audio) : undefined} />;
         break;
       case 'postcard':
         itemView = <PostcardItem key={`${item.id}-${rs.path}`} item={item} path={rs.path} onDone={onDone} />;

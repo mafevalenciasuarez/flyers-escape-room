@@ -16,7 +16,7 @@ function speakerMood(item) {
 
 // Ethics dilemma: every choice gets a reason. The kind and fair choice ends the item;
 // other choices say "Think again" with a reason. No "wrong" screen.
-export default function DilemmaItem({ item, onDone }) {
+export default function DilemmaItem({ item, onDone, onPlayingChange }) {
   const { t, es, dispatch, sound } = useGame();
   const options = useMemo(() => shuffle(item.options), [item]);
   const [picked, setPicked] = useState(null);
@@ -30,7 +30,7 @@ export default function DilemmaItem({ item, onDone }) {
     const ok = id === item.answer;
     setPicked(id);
     dispatch({ type: 'ANSWER', correct: ok });
-    sound(ok ? 'right' : 'wrong');
+    if (ok) sound('right');
     if (!ok) {
       setWrongs((w) => w + 1);
       setTried((s) => new Set(s).add(id));
@@ -47,7 +47,7 @@ export default function DilemmaItem({ item, onDone }) {
             <ImageSlot id={item.image} />
           </div>
         ) : null}
-        {item.audio ? <AudioPlayer clipId={item.audio} unlimited label={item.speaker} /> : null}
+        {item.audio ? <AudioPlayer clipId={item.audio} unlimited label={item.speaker} onPlayingChange={onPlayingChange} /> : null}
       </div>
       {item.text ? (
         <div className="reading-card">

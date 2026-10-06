@@ -8,7 +8,7 @@ import useReducedMotion from '../lib/useReducedMotion.js';
 import Icon from '../components/Icon.jsx';
 import PieceCard from '../components/PieceCard.jsx';
 import StationSvg, { usePointFractions } from '../components/StationSvg.jsx';
-import { Starfield } from '../components/SpaceBackdrop.jsx';
+import { Starfield } from '../components/Starfield.jsx';
 import { Es } from '../components/Bilingual.jsx';
 import './MapScreen.css';
 

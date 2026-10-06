@@ -367,7 +367,11 @@ html[data-contrast='high'] .streak { background: #000; border: 2px solid #fff; }
 
 /* ---------- Gap fill ---------- */
 .gap-text { font-size: 1.1rem; line-height: calc(var(--lh) + 0.4); }
-.gap { display: inline-flex; align-items: center; gap: 0.2rem; border-bottom: 3px solid var(--text); padding: 0 0.2rem; min-width: 4em; font-weight: 600; }
+.gap { display: inline-flex; align-items: center; gap: 0.2rem; border-bottom: 3px solid var(--text); padding: 0 0.2rem; min-width: 4em; font-weight: 600; vertical-align: middle; }
+.gap:has(.gap-select), .gap:has(.gap-input) { border-bottom: 0; min-width: 0; padding: 0 0.1rem; }
+.gap-select { min-height: 48px; max-width: 100%; padding: 0.2rem 0.45rem; border: 2px solid var(--border); border-radius: 10px; background: var(--card); color: var(--text); font: inherit; font-weight: 600; }
+.gap .gap-input { width: 8em; min-height: 48px; }
+html[data-contrast='high'] .gap-select { border-width: 3px; }
 .gap.is-right { border-color: var(--right); color: var(--right); }
 .gap.is-wrong { border-bottom-style: dashed; border-color: var(--wrong); }
 .gap-num { font-size: 0.7em; background: var(--text); color: var(--bg); border-radius: 6px; padding: 0 0.3rem; }
@@ -395,11 +399,13 @@ html[data-contrast='high'] .streak { background: #000; border: 2px solid #fff; }
 .sentence-end { font-size: 1.4rem; font-weight: 700; }
 
 /* ---------- Paths & postcard (Room 3) ---------- */
-.path-picker { border: none; padding: 0; margin: 0; }
+.path-picker { border: none; padding: 0; margin: 0; min-width: 0; }
 .path-picker legend { font-weight: 600; font-size: 1.2rem; margin-bottom: 0.6rem; }
-.path-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; }
-.path-btn { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 1rem; border: 2px solid var(--border); border-radius: var(--radius); background: var(--card); cursor: pointer; text-align: center; min-height: 160px; }
-.path-btn.is-selected { border-width: 4px; border-color: var(--primary); }
+.path-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; }
+.path-btn { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 1rem; border: 2px solid var(--border); border-radius: var(--radius); background: var(--card); cursor: pointer; text-align: center; min-height: 160px; min-width: 0; }
+.path-btn.is-selected { border-width: 4px; border-color: var(--primary); outline: 3px solid var(--text); outline-offset: 2px; }
+.path-medal { display: block; height: 80px; width: auto; }
+.path-tick { color: var(--text); }
 .medal-bronze .icon, .medal-bronze.prize .icon { color: #9c5b25; }
 .medal-silver .icon { color: #6b7280; }
 .medal-gold .icon { color: #b8860b; }
@@ -408,8 +414,33 @@ html[data-contrast='high'] .medal-bronze .icon, html[data-contrast='high'] .meda
 .word-box ul { list-style: none; padding: 0; margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .word-box li { padding: 0.2rem 0.7rem; border: 2px solid var(--border); border-radius: 999px; }
 .word-box li.is-used { border-color: var(--right); background: var(--right-bg); font-weight: 600; }
-.postcard { background: var(--card); border: 3px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; }
-.postcard textarea { width: 100%; min-height: 8em; padding: 0.6rem; border: 2px solid var(--border); border-radius: 10px; background: var(--card); line-height: var(--lh); }
+.postcard {
+  position: relative;
+  background: #FBF4E4;
+  color: #14213d;
+  border: 1px solid #14213d;
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+}
+.postcard-head { position: relative; min-height: 72px; padding-right: 9rem; }
+.postcard-marks {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8rem;
+  height: 64px;
+  pointer-events: none;
+}
+.postcard-stamp { position: absolute; top: 0; right: 0; height: 64px; width: auto; }
+.postcard-postmark { position: absolute; top: 8px; right: 36px; height: 48px; width: auto; opacity: 0.5; }
+.postcard .reading-card { background: transparent; border: none; padding: 0.2rem 0 0; color: inherit; }
+.postcard textarea { width: 100%; min-height: 8em; padding: 0.6rem; border: 2px solid var(--border); border-radius: 10px; background: #fff; color: #14213d; line-height: var(--lh); }
+.postcard .gap-select, .postcard .gap .gap-input { background: #fff; color: #14213d; }
+html[data-contrast='high'] .postcard { background: var(--card); color: var(--text); border: 3px solid var(--border); }
+html[data-contrast='high'] .postcard-marks { display: none; }
+html[data-contrast='high'] .postcard textarea,
+html[data-contrast='high'] .postcard .gap-select,
+html[data-contrast='high'] .postcard .gap .gap-input { background: var(--card); color: var(--text); border-width: 3px; }
 .postcard-line { font-weight: 600; }
 .counters { color: var(--muted); margin: 0; }
 
@@ -466,6 +497,7 @@ html[data-contrast='high'] .piece-card { background: #000; color: #fff; border-c
 .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.9rem; }
 .summary-card { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 1rem; }
 .prize { display: flex; align-items: center; gap: 0.5rem; font-size: 1.05rem; }
+.prize-badge { display: block; object-fit: contain; }
 .word-chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .word-chips li { padding: 0.2rem 0.7rem; border-radius: 999px; background: var(--secondary); border: 1px solid var(--border); }
 .big-score { font-size: 1.3rem; display: flex; align-items: center; gap: 0.4rem; margin: 0; }
@@ -496,6 +528,7 @@ html[data-contrast='high'] .piece-card { background: #000; color: #fff; border-c
 }
 @media (max-width: 520px) {
   .options-pictures, .options-big { grid-template-columns: 1fr; }
+  .path-options { grid-template-columns: 1fr; }
 }
 
 /* ---------- Motion ---------- */

@@ -43,7 +43,7 @@ export default function SettingsPanel({ onClose }) {
   const lines = t('lineOptions');
 
   return (
-    <Modal title={t('settingsTitle')} onClose={onClose} labelledBy="settings-title">
+    <Modal title={t('settingsTitle')} onClose={onClose} labelledBy="settings-title" sfx="none">
       <Es>{es('settingsTitle')}</Es>
       <div className="settings-grid">
         <Choice

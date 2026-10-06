@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { audioById } from '../content/index.js';
 import { asset, fill } from '../lib/util.js';
+import { setSpokenPlaying } from '../lib/sfx.js';
 import { useGame } from '../state/GameContext.jsx';
 import { Button, Es } from './Bilingual.jsx';
 import Icon from './Icon.jsx';
@@ -37,6 +38,12 @@ export default function AudioPlayer({
 
   useEffect(() => {
     onPlayingRef.current?.(status === 'playing');
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== 'playing') return undefined;
+    setSpokenPlaying(true);
+    return () => setSpokenPlaying(false);
   }, [status]);
 
   useEffect(() => {

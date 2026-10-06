@@ -159,6 +159,78 @@ if (!fs.existsSync(engineBgPath)) {
   if (/<text\b/i.test(engineBg)) problems.push('engine-room-bg.svg contains a <text> element');
 }
 
+function checkBackdrop(file, ids) {
+  const filePath = path.join(root, 'src', 'assets', 'svg', file);
+  if (!fs.existsSync(filePath)) {
+    problems.push(`${file} is missing`);
+    return;
+  }
+  const svg = fs.readFileSync(filePath, 'utf8');
+  for (const id of ids) {
+    if (!new RegExp(`\\sid="${id}(?:[_-][^"]*)?"`).test(svg)) problems.push(`${file} has no id "${id}"`);
+  }
+  if (/<image\b/i.test(svg)) problems.push(`${file} contains an embedded <image>`);
+  if (/<text\b/i.test(svg)) problems.push(`${file} contains a <text> element`);
+  const box = svg.match(/viewBox="\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*"/);
+  if (box) {
+    const vbW = Number(box[3]);
+    const vbH = Number(box[4]);
+    for (const rect of svg.matchAll(/<rect\b([^>]*)>/g)) {
+      const attrs = rect[1];
+      const num = (name) => {
+        const found = attrs.match(new RegExp(`${name}="([^"]+)"`));
+        return found ? Number(found[1]) : 0;
+      };
+      if (num('width') >= vbW * 0.9 && num('height') >= vbH * 0.9) {
+        problems.push(`${file} has a full-viewBox background rectangle`);
+        break;
+      }
+    }
+  }
+}
+
+checkBackdrop('science-room-bg.svg', ['radio-screen', 'ceiling-lamp-glow', 'chemistry-glass']);
+checkBackdrop('robot-room-bg.svg', ['ceiling-lamp-glow', 'console-screen']);
+checkBackdrop('radio-room-bg.svg', ['radio-screen']);
+
+const gardenBgPath = path.join(root, 'src', 'assets', 'svg', 'garden-room-bg.svg');
+if (!fs.existsSync(gardenBgPath)) {
+  problems.push('garden-room-bg.svg is missing');
+} else {
+  const gardenBg = fs.readFileSync(gardenBgPath, 'utf8');
+  for (const id of ['ceiling-lamp-glow', 'light-beam']) {
+    if (!new RegExp(`\\sid="${id}(?:[_-][^"]*)?"`).test(gardenBg)) problems.push(`garden-room-bg.svg has no id "${id}"`);
+  }
+  if (/<image\b/i.test(gardenBg)) problems.push('garden-room-bg.svg contains an embedded <image>');
+  if (/<text\b/i.test(gardenBg)) problems.push('garden-room-bg.svg contains a <text> element');
+  const box = gardenBg.match(/viewBox="\s*([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s*"/);
+  if (box) {
+    const vbW = Number(box[3]);
+    const vbH = Number(box[4]);
+    for (const rect of gardenBg.matchAll(/<rect\b([^>]*)>/g)) {
+      const attrs = rect[1];
+      const num = (name) => {
+        const found = attrs.match(new RegExp(`${name}="([^"]+)"`));
+        return found ? Number(found[1]) : 0;
+      };
+      if (num('width') >= vbW * 0.9 && num('height') >= vbH * 0.9) {
+        problems.push('garden-room-bg.svg has a full-viewBox background rectangle');
+        break;
+      }
+    }
+  }
+}
+
+for (const file of ['medal-bronze.svg', 'medal-silver.svg', 'medal-gold.svg', 'badge-garden-star.svg', 'stamp-earth.svg', 'postmark.svg']) {
+  const filePath = path.join(root, 'src', 'assets', 'svg', file);
+  if (!fs.existsSync(filePath)) {
+    problems.push(`${file} is missing`);
+    continue;
+  }
+  const art = fs.readFileSync(filePath, 'utf8');
+  if (/<text\b/i.test(art)) problems.push(`${file} contains a <text> element`);
+}
+
 for (const n of notes) console.log(`  note: ${n}`);
 if (problems.length) {
   console.error('check-svg: the art and the CSS disagree.');

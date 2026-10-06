@@ -3,7 +3,7 @@ import { gameReducer, initialState } from './gameReducer.js';
 import { loadSaved, save } from './storage.js';
 import { GAME_MINUTES, ROOM_BY_ID, uiEn, uiEs } from '../content/index.js';
 import { fill } from '../lib/util.js';
-import { playTone } from '../lib/sound.js';
+import { configureSfx, playRoomEnd, playSfx, preloadSfx, resetSfxSession } from '../lib/sfx.js';
 
 const GameContext = createContext(null);
 const GAME_MS = GAME_MINUTES * 60 * 1000;
@@ -18,6 +18,39 @@ export function GameProvider({ children, initial, now = () => Date.now() }) {
   useEffect(() => {
     if (state.screen !== 'welcome') save(state);
   }, [state]);
+
+  useEffect(() => {
+    configureSfx({ sounds: state.settings.sounds, calm: state.settings.calm });
+  }, [state.settings.sounds, state.settings.calm]);
+
+  useEffect(() => {
+    resetSfxSession();
+  }, [state.startedAt]);
+
+  const screenRef = useRef(null);
+  useEffect(() => {
+    const prev = screenRef.current;
+    screenRef.current = state.screen;
+    if (prev == null) return;
+    if (state.screen === 'summary' && prev !== 'summary') playRoomEnd(`summary:${state.currentRoom}`);
+    if (state.screen === 'end' && prev !== 'end') playRoomEnd('end');
+  }, [state.screen, state.currentRoom]);
+
+  useEffect(() => {
+    const onClick = (event) => {
+      const node = event.target instanceof Element ? event.target : null;
+      const hit = node?.closest('button, [role="button"]');
+      if (!hit || hit.closest('[data-sfx="none"]')) return;
+      playSfx('click');
+    };
+    const arm = () => preloadSfx();
+    document.addEventListener('pointerdown', arm, { once: true });
+    document.addEventListener('click', onClick, true);
+    return () => {
+      document.removeEventListener('pointerdown', arm);
+      document.removeEventListener('click', onClick, true);
+    };
+  }, []);
 
   const running = state.startedAt && !state.endedAt && !state.timeUp;
   useEffect(() => {
@@ -59,12 +92,10 @@ export function GameProvider({ children, initial, now = () => Date.now() }) {
     [dispatch]
   );
 
-  const sound = useCallback(
-    (kind) => {
-      if (state.settings.sounds) playTone(kind);
-    },
-    [state.settings.sounds]
-  );
+  const sound = useCallback((kind) => {
+    if (kind === 'right') playSfx('correct');
+    else if (kind === 'wrong') playSfx('error');
+  }, []);
 
   const value = useMemo(
     () => ({ state, dispatch, t, es, enterRoom, sound, remainingMs, gameMs: GAME_MS, saved, now: () => nowRef.current() }),

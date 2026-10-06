@@ -1,12 +1,13 @@
 import { ROOMS, ROOM_BY_ID } from '../content/index.js';
 import { resetStationVisit } from '../lib/stationVisit.js';
+import { SFX_DEFAULT_ON } from '../lib/sfx.js';
 
 export const DEFAULT_SETTINGS = {
   size: 0, // 0 big, 1 bigger, 2 very big
   spacing: 0, // 0 normal, 1 wide
   font: 'lexend', // lexend | atkinson | system
   contrast: false,
-  sounds: false,
+  sounds: SFX_DEFAULT_ON,
   calm: false,
   spanish: false,
 };

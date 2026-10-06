@@ -5,6 +5,7 @@ import useHelp from '../useHelp.js';
 import Feedback from '../Feedback.jsx';
 import Icon from '../Icon.jsx';
 import { Button, Es, Instruction } from '../Bilingual.jsx';
+import { pulseReward } from '../../lib/roomFx.js';
 
 // Word order: choose tiles one by one to build the sentence. Choosing a placed
 // word sends it back. Unlimited tries; help never shows the full sentence.
@@ -27,6 +28,7 @@ export default function OrderItem({ item, variantId, onDone }) {
     if (ok) {
       setStatus('right');
       sound('right');
+      pulseReward();
     } else {
       setStatus('wrong');
       sound('wrong');

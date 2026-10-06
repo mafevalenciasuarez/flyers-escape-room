@@ -8,6 +8,7 @@ import ImageSlot from '../ImageSlot.jsx';
 import MonitorFrame from '../MonitorFrame.jsx';
 import Icon from '../Icon.jsx';
 import { Button, Es, Instruction } from '../Bilingual.jsx';
+import { pulseReward } from '../../lib/roomFx.js';
 
 const LETTERS = ['A', 'B', 'C', 'D'];
 
@@ -70,6 +71,7 @@ export default function ChoiceItem({ item, confidence = false, onDone, onHelpLev
     if (correct) {
       setStatus('right');
       sound('right');
+      pulseReward();
     } else {
       setStatus('wrong');
       setTried((s) => new Set(s).add(selected));

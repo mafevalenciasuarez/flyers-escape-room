@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 // Accessible dialog: moves focus inside, keeps Tab inside, Escape closes,
 // and gives focus back to the button that opened it.
-export default function Modal({ title, onClose, children, labelledBy = 'modal-title' }) {
+export default function Modal({ title, onClose, children, labelledBy = 'modal-title', sfx = 'click' }) {
   const ref = useRef(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
@@ -41,7 +41,7 @@ export default function Modal({ title, onClose, children, labelledBy = 'modal-ti
 
   return (
     <div className="modal-backdrop">
-      <div className="modal" role="dialog" aria-modal="true" aria-labelledby={labelledBy} ref={ref} tabIndex={-1}>
+      <div className="modal" role="dialog" aria-modal="true" aria-labelledby={labelledBy} ref={ref} tabIndex={-1} data-sfx={sfx === 'none' ? 'none' : undefined}>
         <h2 id={labelledBy}>{title}</h2>
         {children}
       </div>
