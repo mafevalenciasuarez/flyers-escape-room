@@ -1,7 +1,7 @@
 import { sfxManifest } from '../content/sfxManifest.js';
 
 export const SFX_DEFAULT_ON = true;
-export const SFX_MASTER = 0.35;
+export const SFX_MASTER = 1;
 export const SFX_CLICK_GAP_MS = 120;
 export const SFX_BASE = Object.fromEntries(sfxManifest.map((row) => [row.id, row.volume]));
 

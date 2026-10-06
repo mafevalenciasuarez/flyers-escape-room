@@ -66,7 +66,7 @@ describe('sound effects', () => {
     expect(plays.some((row) => row.src.includes('answer-error'))).toBe(false);
     playSfx('correct');
     const correct = plays.find((row) => row.src.includes('answer-correct'));
-    expect(correct.volume).toBeCloseTo(0.35 * 0.8 * 0.5);
+    expect(correct.volume).toBeCloseTo(1 * 0.8 * 0.5);
     vi.restoreAllMocks();
   });
 

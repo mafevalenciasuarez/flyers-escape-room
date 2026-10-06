@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
-import { gameReducer, initialState } from './gameReducer.js';
+import { gameReducer, initialState, settingsFromSaved } from './gameReducer.js';
 import { loadSaved, save } from './storage.js';
 import { GAME_MINUTES, ROOM_BY_ID, uiEn, uiEs } from '../content/index.js';
 import { fill } from '../lib/util.js';
@@ -10,7 +10,11 @@ const GAME_MS = GAME_MINUTES * 60 * 1000;
 
 export function GameProvider({ children, initial, now = () => Date.now() }) {
   const [saved] = useState(() => (initial ? null : loadSaved()));
-  const [state, dispatch] = useReducer(gameReducer, undefined, () => initial || initialState(saved?.settings));
+  const [state, dispatch] = useReducer(
+    gameReducer,
+    undefined,
+    () => initial || initialState(settingsFromSaved(saved?.settings))
+  );
   const [clock, setClock] = useState(now());
   const nowRef = useRef(now);
   nowRef.current = now;
@@ -22,6 +26,11 @@ export function GameProvider({ children, initial, now = () => Date.now() }) {
   useEffect(() => {
     configureSfx({ sounds: state.settings.sounds, calm: state.settings.calm });
   }, [state.settings.sounds, state.settings.calm]);
+
+  useEffect(() => {
+    if (state.settings.soundsChosen || state.settings.sounds) return;
+    dispatch({ type: 'SETTING', key: 'sounds', value: true });
+  }, [state.settings.sounds, state.settings.soundsChosen]);
 
   useEffect(() => {
     resetSfxSession();

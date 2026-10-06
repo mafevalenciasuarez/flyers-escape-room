@@ -32,6 +32,15 @@ export function initialState(settings = DEFAULT_SETTINGS) {
   };
 }
 
+// Older saves stored sounds:false because that used to be the default. That is
+// not a choice the learner made, so those saves follow the new default until
+// they use the Game sounds switch.
+export function settingsFromSaved(saved) {
+  const next = { ...DEFAULT_SETTINGS, ...(saved || {}) };
+  if (!saved?.soundsChosen) next.sounds = SFX_DEFAULT_ON;
+  return next;
+}
+
 function newRoomState(variants = {}, now = Date.now()) {
   return { phase: 'intro', itemIndex: 0, results: {}, variants, path: null, mode: null, startedAt: now, finishedAt: null, done: false };
 }
@@ -46,7 +55,7 @@ export function gameReducer(state, action) {
       resetStationVisit();
       return { ...initialState(state.settings), screen: 'map', startedAt: action.now ?? Date.now() };
     case 'RESUME':
-      return { ...action.saved, settings: { ...DEFAULT_SETTINGS, ...action.saved.settings } };
+      return { ...action.saved, settings: settingsFromSaved(action.saved.settings) };
     case 'NEW_GAME':
       resetStationVisit();
       return initialState(state.settings);
@@ -96,8 +105,11 @@ export function gameReducer(state, action) {
       return state.timeUp ? state : { ...state, timeUp: true, practice: true, showTimeUp: true };
     case 'ACK_TIME_UP':
       return { ...state, showTimeUp: false };
-    case 'SETTING':
-      return { ...state, settings: { ...state.settings, [action.key]: action.value } };
+    case 'SETTING': {
+      const settings = { ...state.settings, [action.key]: action.value };
+      if (action.key === 'sounds') settings.soundsChosen = true;
+      return { ...state, settings };
+    }
     default:
       return state;
   }
