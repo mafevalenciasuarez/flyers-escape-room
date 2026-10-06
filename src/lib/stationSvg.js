@@ -22,8 +22,6 @@ const NAMES = [
   'light-room1',
   'light-room2',
   'light-room3',
-  'light-room4',
-  'light-room5',
   'light-radio',
   'zone-room1',
   'zone-room2',

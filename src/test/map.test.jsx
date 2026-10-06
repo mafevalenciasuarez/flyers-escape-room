@@ -24,8 +24,6 @@ describe('StationSvg', () => {
     for (const name of ['station-art', 'map-zones', 'map-focus', 'zone-room1', 'zone-radio', 'focus-room1', 'focus-radio', 'light-room1', 'light-radio']) {
       expect(container.querySelector(`[data-st="${name}"]`), name).toBeTruthy();
     }
-    expect(container.querySelector('[data-st="light-room4"]')).toBeNull();
-    expect(container.querySelector('[data-st="light-room5"]')).toBeNull();
     expect(container.querySelector('[data-st="zone-room1"]').getAttribute('pointer-events')).toBe('all');
     expect(container.querySelector('[data-st="focus-radio"]').getAttribute('pointer-events')).toBe('none');
     expect(container.querySelector('[data-st="light-room1"]').getAttribute('data-state')).toBe('on');

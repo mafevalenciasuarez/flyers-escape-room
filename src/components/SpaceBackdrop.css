@@ -30,10 +30,6 @@
   --light-2-dur: 4.8s;
   --light-3-delay: 4.05s;
   --light-3-dur: 5s;
-  --light-4-delay: 4.35s;
-  --light-4-dur: 4.7s;
-  --light-5-delay: 3.55s;
-  --light-5-dur: 5.4s;
   --light-6-delay: 4.6s;
   --light-6-dur: 4.6s;
   --light-7-delay: 3.9s;
@@ -179,8 +175,6 @@
 .space-scene[data-variant='broken'] [data-st='light-room1'] { --light-delay: var(--light-1-delay); --light-dur: var(--light-1-dur); }
 .space-scene[data-variant='broken'] [data-st='light-room2'] { --light-delay: var(--light-2-delay); --light-dur: var(--light-2-dur); }
 .space-scene[data-variant='broken'] [data-st='light-room3'] { --light-delay: var(--light-3-delay); --light-dur: var(--light-3-dur); }
-.space-scene[data-variant='broken'] [data-st='light-room4'] { --light-delay: var(--light-4-delay); --light-dur: var(--light-4-dur); }
-.space-scene[data-variant='broken'] [data-st='light-room5'] { --light-delay: var(--light-5-delay); --light-dur: var(--light-5-dur); }
 .space-scene[data-variant='broken'] [data-st='light-radio'] { --light-delay: var(--light-radio-delay); --light-dur: var(--light-radio-dur); }
 
 @keyframes light-flicker {
