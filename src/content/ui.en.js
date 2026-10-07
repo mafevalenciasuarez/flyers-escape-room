@@ -14,6 +14,7 @@ export default {
   timeNote: 'You have got 30 minutes. Don\'t worry: you can always finish.',
   helpNote: 'Need help? Ask Pip.',
   listenHelen: 'Listen to Helen',
+  launch: 'Let\'s go',
   start: 'Start',
   resume: 'Go back to my game',
   newGame: 'Start a new game',
@@ -35,6 +36,7 @@ export default {
   close: 'Close',
   // map
   mapTitle: 'Station map',
+  mapHelp: 'Look at the yellow part. Then choose that room.',
   go: 'Go',
   finished: 'Finished',
   nextRoom: 'Next',

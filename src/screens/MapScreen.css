@@ -139,6 +139,16 @@
   margin: 0;
 }
 
+.map-help {
+  margin: 0;
+  color: #d5def2;
+  font-weight: 600;
+}
+
+html[data-contrast='high'] .map-help {
+  color: #fff;
+}
+
 .map-cards {
   list-style: none;
   margin: 0;
@@ -207,6 +217,23 @@
   border-color: var(--right);
 }
 
+.screen-map .room-card.is-done .map-card,
+.screen-map .room-card.is-locked .map-card {
+  color: var(--muted);
+}
+
+.screen-map .room-card.is-done .map-go,
+.screen-map .room-card.is-locked .map-go {
+  color: #8aa0c8;
+}
+
+html[data-contrast='high'] .screen-map .room-card.is-done .map-card,
+html[data-contrast='high'] .screen-map .room-card.is-locked .map-card,
+html[data-contrast='high'] .screen-map .room-card.is-done .map-go,
+html[data-contrast='high'] .screen-map .room-card.is-locked .map-go {
+  color: var(--text);
+}
+
 .map-card[aria-disabled='true'] {
   cursor: default;
 }
@@ -272,10 +299,21 @@
   opacity: 1;
 }
 
+.screen-map [data-st^='zone-'] {
+  stroke: #ffc107;
+  stroke-width: 16;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  paint-order: stroke fill;
+  fill-opacity: 0;
+  stroke-opacity: 0;
+}
+
 .screen-map [data-st^='zone-'][data-state='locked'],
 .screen-map [data-st^='zone-'][data-state='done'],
 .screen-map [data-st^='zone-'][data-state='ready'] {
   opacity: 0;
+  stroke-opacity: 0;
 }
 
 .screen-map [data-st^='zone-'][data-state='locked'] {
@@ -287,20 +325,28 @@
 }
 
 .screen-map [data-st^='zone-'][data-state='active'] {
-  opacity: 0.22;
+  opacity: 1;
+  fill-opacity: 0.22;
+  stroke-opacity: 1;
 }
 
 .screen-map [data-st^='zone-'][data-state='selected'] {
-  opacity: 0.38;
+  opacity: 1;
+  fill-opacity: 0.38;
+  stroke-opacity: 1;
 }
 
 .screen-map:not(.is-static) [data-st^='zone-'][data-state='next'] {
+  opacity: 1;
+  stroke-opacity: 1;
   animation: zone-pulse 3s ease-in-out infinite;
 }
 
 .screen-map.is-static [data-st^='zone-'][data-state='next'] {
   animation: none;
-  opacity: 0.28;
+  opacity: 1;
+  fill-opacity: 0.28;
+  stroke-opacity: 1;
 }
 
 .screen-map.is-static .map-station-cam,
@@ -313,13 +359,17 @@
 
 @keyframes zone-pulse {
   0%,
-  100% { opacity: 0.14; }
-  50% { opacity: 0.34; }
+  100% { fill-opacity: 0.14; }
+  50% { fill-opacity: 0.34; }
 }
 
 html[data-contrast='high'] .screen-map {
   --card-fill: #222222;
   --zone-fill: #ffff00;
+}
+
+html[data-contrast='high'] .screen-map [data-st^='zone-'] {
+  stroke: #ffff00;
 }
 
 @media (max-width: 900px) {
@@ -372,7 +422,9 @@ html[data-contrast='high'] .screen-map {
 @media (prefers-reduced-motion: reduce) {
   .screen-map [data-st^='zone-'][data-state='next'] {
     animation: none;
-    opacity: 0.28;
+    opacity: 1;
+    fill-opacity: 0.28;
+    stroke-opacity: 1;
   }
 
   .screen-map .star {

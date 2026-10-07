@@ -71,7 +71,7 @@ function cameraTransform(panel, cam, frac) {
 export default function MapScreen() {
   const { state, t, es, enterRoom } = useGame();
   const reduced = useReducedMotion();
-  const isStatic = reduced || state.settings.calm;
+  const isStatic = reduced;
   const next = nextRoomId(state);
   const ready = allPiecesFound(state);
   const found = ROOMS.filter((room) => state.pieces[room.id]);
@@ -221,6 +221,10 @@ export default function MapScreen() {
             <Icon name="map" /> {t('mapTitle')}
             <Es>{es('mapTitle')}</Es>
           </h1>
+          <p className="map-help">
+            {t('mapHelp')}
+            <Es>{es('mapHelp')}</Es>
+          </p>
           <ol className="map-cards">
             {ENTRIES.map((room, index) => {
               const done = !!state.rooms[room.gameId]?.done;
@@ -245,7 +249,7 @@ export default function MapScreen() {
                 statusKey = 'statusOpen';
               }
               return (
-                <li key={room.gameId} className={`room-card${done ? ' is-done' : ''}${isNext ? ' is-next' : ''}`}>
+                <li key={room.gameId} className={`room-card${done ? ' is-done' : ''}${isNext ? ' is-next' : ''}${isLocked ? ' is-locked' : ''}`}>
                   {index > 0 ? (
                     <span className={`map-join${prevDone ? ' is-on' : ''}`} aria-hidden="true">
                       <span className="map-join-fill" />

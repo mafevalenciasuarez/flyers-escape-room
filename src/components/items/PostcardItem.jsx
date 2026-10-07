@@ -129,7 +129,7 @@ export default function PostcardItem({ item, path, onDone }) {
     <GapFillItem
       item={framed}
       mode={path === 'hard' ? 'bank' : 'choice'}
-      inline={path === 'hard'}
+      inline
       onDone={onDone}
       wrapPassage={(passage) => (
         <PostcardShell opening={item.opening} closing={item.closing}>

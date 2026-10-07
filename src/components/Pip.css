@@ -109,7 +109,7 @@
   50% { opacity: 1; transform: translateY(var(--pip-dot-rise)); }
 }
 
-/* Calm mode and reduced motion: everything visible, nothing moves. */
+/* Reduced motion: everything visible, nothing moves. */
 .pip.is-static .pip-float,
 .pip.is-static .pip-swap,
 .pip.is-static [data-pip],

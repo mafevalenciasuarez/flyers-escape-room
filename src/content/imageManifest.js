@@ -88,6 +88,8 @@ const images = [
   {
     id: 'r5_holly',
     file: 'r5_holly.png',
+    width: 1071,
+    height: 800,
     room: 'room5',
     alt: 'Holly, a girl in a space uniform, is holding her homework book.',
     brief: 'Friendly classmate Holly (about 10 years old) in a space uniform, holding an empty homework book, looking worried.',

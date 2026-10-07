@@ -14,17 +14,17 @@ export default function RoomBackdrop({ roomId, audioPlaying = false, sceneState 
   const { state } = useGame();
   const reduced = useReducedMotion();
   const rootRef = useRef(null);
-  const still = reduced || state.settings.calm;
+  const still = reduced;
   const roomDone = Boolean(state.rooms[roomId]?.done);
   const [rewardOn, setRewardOn] = useState(false);
 
   useEffect(() => {
     if (roomId !== 'room4') return undefined;
     return subscribeReward(() => {
-      if (reduced || state.settings.calm) return;
+      if (reduced) return;
       setRewardOn(true);
     });
-  }, [roomId, reduced, state.settings.calm]);
+  }, [roomId, reduced]);
 
   useEffect(() => {
     if (!rewardOn) return undefined;

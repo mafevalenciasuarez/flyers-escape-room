@@ -6,19 +6,19 @@
   --station-top: 12%;
   /* The new art is taller (2120.85 x 1831.59). Keep it left of the title. */
   --station-width: 34%;
-  --planet-in-delay: 0.2s;
-  --planet-in-dur: 2.6s;
+  --planet-in-delay: 0s;
+  --planet-in-dur: 1.8s;
   --planet-ease: cubic-bezier(0.22, 0.8, 0.3, 1);
   /* The planet art sits in the lower quarter of its viewBox, so a full-width
      image still climbs over the lower text. Nudge the resting position down. */
   --planet-rest: 72px;
-  --glow-fade-delay: 1.8s;
-  --glow-fade-dur: 1.8s;
-  --glow-breathe-delay: 3.6s;
+  --glow-fade-delay: 1.2s;
+  --glow-fade-dur: 1.4s;
+  --glow-breathe-delay: 2.6s;
   --glow-breathe-dur: 6s;
-  --station-in-delay: 1.6s;
-  --station-in-dur: 1.6s;
-  --station-drift-delay: 3.2s;
+  --station-in-delay: 0s;
+  --station-in-dur: 1.5s;
+  --station-drift-delay: 1.6s;
   --station-drift-dur: 8s;
   --station-drift-y: 6px;
   --station-drift-rot: 0.6deg;
@@ -50,12 +50,14 @@
   left: 0;
   bottom: 0;
   width: 100%;
+  transform-origin: center bottom;
+  transform: scale(0.38);
+  animation: planet-in var(--planet-in-dur) var(--planet-ease) var(--planet-in-delay) forwards;
 }
 
 .planet-slide {
   position: relative;
-  transform: translateY(100%);
-  animation: planet-in var(--planet-in-dur) var(--planet-ease) var(--planet-in-delay) forwards;
+  transform: translateY(var(--planet-rest));
 }
 
 .planet-img,
@@ -85,7 +87,7 @@
 }
 
 @keyframes planet-in {
-  to { transform: translateY(var(--planet-rest)); }
+  to { transform: scale(1); }
 }
 
 @keyframes glow-fade {
@@ -105,9 +107,10 @@
 }
 
 .station-enter {
-  opacity: 0;
-  transform: translate(-24px, -16px) scale(0.96);
-  animation: station-in var(--station-in-dur) ease-out var(--station-in-delay) forwards;
+  transform-origin: center center;
+  opacity: 0.45;
+  transform: scale(0.42);
+  animation: station-in var(--station-in-dur) var(--planet-ease) var(--station-in-delay) forwards;
 }
 
 .station-drift {
@@ -123,7 +126,7 @@
 }
 
 @keyframes station-in {
-  to { opacity: 1; transform: none; }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes station-drift {
@@ -169,6 +172,11 @@
   transform: none;
 }
 
+.space-scene.is-static .planet {
+  animation: none;
+  transform: none;
+}
+
 .space-scene.is-static .planet-slide {
   animation: none;
   transform: translateY(var(--planet-rest));
@@ -200,6 +208,11 @@
   .space-scene .star {
     animation: none !important;
     opacity: 0.5;
+    transform: none;
+  }
+
+  .space-scene .planet {
+    animation: none !important;
     transform: none;
   }
 

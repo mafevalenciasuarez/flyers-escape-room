@@ -12,21 +12,25 @@ export default function TopBar({ onSettings }) {
   return (
     <header className={onSpace ? 'topbar topbar-welcome' : 'topbar'}>
       <div className="topbar-title">
-        <Icon name="radio" />
-        <span>{t('title')}</span>
+        <span className="topbar-chip">
+          <Icon name="radio" />
+          <span>{t('title')}</span>
+        </span>
       </div>
       {inGame ? (
         <div className="topbar-progress" aria-label={t('piecesFound', { n: found })}>
-          <span className="pieces-dots" aria-hidden="true">
-            {ROOMS.map((r) => (
-              <span key={r.id} className={`dot ${state.pieces[r.id] ? 'dot-on' : ''}`}>
-                {state.pieces[r.id] ? <Icon name="check" size={14} /> : null}
-              </span>
-            ))}
-          </span>
-          <span className="pieces-text" aria-hidden="true">
-            {t('piecesFound', { n: found })}
-            <Es>{es('piecesFound', { n: found })}</Es>
+          <span className="topbar-chip">
+            <span className="pieces-dots" aria-hidden="true">
+              {ROOMS.map((r) => (
+                <span key={r.id} className={`dot ${state.pieces[r.id] ? 'dot-on' : ''}`}>
+                  {state.pieces[r.id] ? <Icon name="check" size={14} /> : null}
+                </span>
+              ))}
+            </span>
+            <span className="pieces-text" aria-hidden="true">
+              {t('piecesFound', { n: found })}
+              <Es>{es('piecesFound', { n: found })}</Es>
+            </span>
           </span>
         </div>
       ) : null}

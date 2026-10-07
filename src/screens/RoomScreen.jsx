@@ -168,7 +168,7 @@ export default function RoomScreen() {
             key={`${item.id}-${mode}`}
             item={item}
             mode={mode}
-            inline={rs.path === 'hard' || rs.path === 'veryhard'}
+            inline
             onDone={onDone}
           />
         );

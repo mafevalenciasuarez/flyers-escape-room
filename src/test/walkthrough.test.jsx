@@ -59,10 +59,10 @@ function playRoom3(path = 'easy') {
   startRoom();
   click($(`[data-path="${path}"]`));
   const gaps = room3.items[0].gaps;
-  for (const [id, gap] of Object.entries(gaps)) click($(`[data-gap="${id}"][data-word="${gap.answers[0]}"]`));
+  for (const [id, gap] of Object.entries(gaps)) fireEvent.change($(`select[data-gap="${id}"]`), { target: { value: gap.answers[0] } });
   answer();
   next();
-  for (const f of room3.items[1].frames) click($(`[data-gap="${f.id}"][data-word="${f.answers[0]}"]`));
+  for (const f of room3.items[1].frames) fireEvent.change($(`select[data-gap="${f.id}"]`), { target: { value: f.answers[0] } });
   answer();
   next();
   backToMap();

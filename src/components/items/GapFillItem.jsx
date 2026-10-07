@@ -7,7 +7,7 @@ import { Button, Es, Instruction } from '../Bilingual.jsx';
 import { pulseReward } from '../../lib/roomFx.js';
 
 // One-word gaps. mode: "choice" (3 words per gap), "bank" (one word box), "type" (write it).
-// inline puts the bank menu or the writing box inside the sentence. Choice stays under it.
+// inline puts the menu or the writing box inside the sentence.
 // Right gaps lock; wrong gaps get their own help ladder. Never shows the answer.
 export default function GapFillItem({ item, mode = item.mode || 'type', onDone, title, wrapPassage, inline = false }) {
   const { t, es, dispatch, sound } = useGame();
@@ -80,7 +80,7 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
 
   const filledOpen = gapIds.some((id) => !solved[id] && (values[id] || '').trim());
 
-  const inSentence = inline && (mode === 'bank' || mode === 'type');
+  const inSentence = inline && (mode === 'bank' || mode === 'type' || mode === 'choice');
 
   const renderInlineControl = (id) => {
     const n = gapNumber(id);
@@ -105,6 +105,7 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
         />
       );
     }
+    const words = mode === 'choice' ? shuffled[id] : shuffled.__bank;
     return (
       <select
         id={`gap-${item.id}-${id}`}
@@ -116,7 +117,7 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
         aria-invalid={wrong[id] || undefined}
       >
         <option value="">—</option>
-        {shuffled.__bank.map((w) => (
+        {words.map((w) => (
           <option key={w} value={w}>{w}</option>
         ))}
       </select>

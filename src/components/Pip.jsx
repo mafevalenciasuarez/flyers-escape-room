@@ -1,5 +1,4 @@
 import { useEffect, useId, useMemo, useSyncExternalStore } from 'react';
-import { useGame } from '../state/GameContext.jsx';
 import useReducedMotion from '../lib/useReducedMotion.js';
 import { INSTANCE_TOKEN, getPipSvg } from '../lib/pipSvg.js';
 import { MOOD_ALIASES } from '../lib/pipIds.js';
@@ -46,10 +45,9 @@ function LegacyFace() {
 // Pip the robot. With children, Pip talks: the bubble is a polite live region so
 // screen readers hear new help without moving focus. The head is decorative.
 export default function Pip({ children, mood = 'neutral', size = 'md', hintLevel, label = 'Pip says:' }) {
-  const { state } = useGame();
   const reduced = useReducedMotion();
   const uid = `p${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
-  const frozen = reduced || state.settings.calm;
+  const frozen = reduced;
   const wantsMotion = size !== 'sm' && !frozen;
 
   useEffect(() => {

@@ -1,0 +1,53 @@
+/* Beat .screen-welcome > :not(.space-scene), which would pin these in the column. */
+.app:has(.screen-welcome.is-launch) { background: #192444; }
+
+.screen-welcome.is-launch {
+  width: auto;
+  margin-left: 0;
+}
+
+.screen-welcome.is-launch > .hyperspace-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: #192444;
+}
+
+.screen-welcome.is-launch > .jump-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 5.5rem 1.2rem 2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.jump-gate h1 {
+  max-width: 16ch;
+  margin: 0;
+  color: #f7f4ea;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  text-shadow: 0 0 12px #0b1224, 0 2px 2px #0b1224;
+}
+
+.jump-gate .btn { pointer-events: auto; }
+
+.screen-welcome.is-launch > .jump-gate.is-jumping {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.jump-gate.is-jumping .btn { pointer-events: none; }
+
+html[data-contrast='high'] .jump-gate h1 {
+  color: #fff;
+  text-shadow: none;
+}

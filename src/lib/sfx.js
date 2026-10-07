@@ -73,7 +73,7 @@ function stop(audio) {
   }
 }
 
-export function playSfx(id) {
+export function playSfx(id, { overlap = false } = {}) {
   try {
     if (!enabled || !byId[id]) return;
     if (spokenBusy()) return;
@@ -88,14 +88,14 @@ export function playSfx(id) {
     const index = cursor.get(id) % 2;
     cursor.set(id, index + 1);
     const audio = list[index];
-    if (current && current !== audio) stop(current);
+    if (!overlap && current && current !== audio) stop(current);
     audio.volume = Math.min(1, Math.max(0, gain));
     try {
       audio.currentTime = 0;
     } catch {
       /* not seekable yet */
     }
-    current = audio;
+    if (!overlap) current = audio;
     const pending = audio.play();
     if (pending && typeof pending.catch === 'function') pending.catch(() => {});
   } catch {
