@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Pip from './Pip.jsx';
 import Icon from './Icon.jsx';
 import { useGame } from '../state/GameContext.jsx';
@@ -6,28 +6,24 @@ import { useGame } from '../state/GameContext.jsx';
 export const THINKING_MS = 700;
 
 // After "Help, Pip!" Pip thinks for a moment before the new help step shows.
-// Display only: the help level has already moved on in the item's state.
+// The previous step stays hidden during that beat. The help level has already
+// moved on in the item's state.
 export function useThinkingBeat(helpKey = 0, hint = null) {
-  const [beat, setBeat] = useState(null);
-  const lastKey = useRef(helpKey);
-  const lastHint = useRef(hint);
+  const [prevKey, setPrevKey] = useState(helpKey);
+  const [thinking, setThinking] = useState(false);
+  const justAsked = helpKey > prevKey;
+  if (justAsked) {
+    setPrevKey(helpKey);
+    setThinking(true);
+  }
 
   useEffect(() => {
-    if (helpKey > lastKey.current) {
-      setBeat({ held: lastHint.current });
-      const timer = setTimeout(() => setBeat(null), THINKING_MS);
-      lastKey.current = helpKey;
-      return () => clearTimeout(timer);
-    }
-    lastKey.current = helpKey;
-    return undefined;
-  }, [helpKey]);
+    if (!thinking) return undefined;
+    const timer = setTimeout(() => setThinking(false), THINKING_MS);
+    return () => clearTimeout(timer);
+  }, [thinking, helpKey]);
 
-  useEffect(() => {
-    if (!beat) lastHint.current = hint;
-  });
-
-  return beat ? { thinking: true, hint: beat.held } : { thinking: false, hint };
+  return thinking ? { thinking: true, hint: null } : { thinking: false, hint };
 }
 
 // Pip's speech area: shows the "why" after a right answer, or the current help
@@ -35,7 +31,9 @@ export function useThinkingBeat(helpKey = 0, hint = null) {
 export default function Feedback({ status, why, hint, wrongText, extra, helpKey = 0, hintLevel }) {
   const { t } = useGame();
   const beat = useThinkingBeat(helpKey, hint);
-  if (status === 'right') {
+  // A later "Help, Pip!" replaces the green "Right" line. The line only stays
+  // when this step is finished and there is no new clue to show.
+  if (status === 'right' && !beat.thinking && !beat.hint) {
     return (
       <Pip mood="happy" label={t('pipSays')}>
         <strong className="fb-right">
@@ -47,9 +45,9 @@ export default function Feedback({ status, why, hint, wrongText, extra, helpKey 
     );
   }
   if (status === 'wrong' || beat.hint || beat.thinking) {
-    const talks = status === 'wrong' || beat.hint || extra;
+    const talks = !beat.thinking && (status === 'wrong' || beat.hint || extra);
     return (
-      <Pip mood={beat.thinking ? 'thinking' : 'hint'} hintLevel={beat.thinking ? undefined : hintLevel} label={t('pipSays')}>
+      <Pip dock mood={beat.thinking ? 'thinking' : 'hint'} hintLevel={beat.thinking ? undefined : hintLevel} label={t('pipSays')} arrive={helpKey}>
         {talks ? (
           <>
             {status === 'wrong' ? (

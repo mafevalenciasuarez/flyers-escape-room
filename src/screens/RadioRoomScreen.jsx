@@ -12,6 +12,7 @@ import Pip from '../components/Pip.jsx';
 import { useThinkingBeat } from '../components/Feedback.jsx';
 import ChoiceItem from '../components/items/ChoiceItem.jsx';
 import { Button, Es, Instruction } from '../components/Bilingual.jsx';
+import { playSfx } from '../lib/sfx.js';
 
 function PlacePieces({ onDone }) {
   const { state, dispatch, t, es, sound } = useGame();
@@ -91,8 +92,8 @@ function PlacePieces({ onDone }) {
         })}
       </ol>
       {message || beat.hint || beat.thinking ? (
-        <Pip mood={beat.thinking ? 'thinking' : 'hint'} hintLevel={beat.thinking ? undefined : level} label={t('pipSays')}>
-          {message || beat.hint ? (
+        <Pip dock mood={beat.thinking ? 'thinking' : 'hint'} hintLevel={beat.thinking ? undefined : level} label={t('pipSays')} arrive={helpPresses}>
+          {!beat.thinking && (message || beat.hint) ? (
             <>
               {message ? <strong className="fb-wrong">{message}</strong> : null}{' '}
               {beat.hint}
@@ -116,6 +117,7 @@ function PlacePieces({ onDone }) {
         <div className="item-actions">
           <Button variant="secondary" icon="help" en={t('help')} es={es('help')} disabled={level >= FINAL.place.hints.length}
             onClick={() => {
+              playSfx('pip-help');
               setLevel((l) => Math.min(FINAL.place.hints.length, l + 1));
               setHelpPresses((n) => n + 1);
             }}

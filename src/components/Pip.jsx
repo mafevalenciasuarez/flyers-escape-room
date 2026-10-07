@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import useReducedMotion from '../lib/useReducedMotion.js';
 import { INSTANCE_TOKEN, getPipSvg } from '../lib/pipSvg.js';
 import { MOOD_ALIASES } from '../lib/pipIds.js';
@@ -44,11 +44,24 @@ function LegacyFace() {
 
 // Pip the robot. With children, Pip talks: the bubble is a polite live region so
 // screen readers hear new help without moving focus. The head is decorative.
-export default function Pip({ children, mood = 'neutral', size = 'md', hintLevel, label = 'Pip says:' }) {
+export default function Pip({ children, mood = 'neutral', size = 'md', hintLevel, label = 'Pip says:', arrive = 0, dock = false }) {
   const reduced = useReducedMotion();
   const uid = `p${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   const frozen = reduced;
   const wantsMotion = size !== 'sm' && !frozen;
+  const seenArrive = useRef(0);
+  const [summoned, setSummoned] = useState(false);
+
+  useEffect(() => {
+    if (frozen || arrive <= seenArrive.current) return undefined;
+    const next = arrive;
+    setSummoned(false);
+    const frame = requestAnimationFrame(() => {
+      seenArrive.current = next;
+      setSummoned(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [arrive, frozen]);
 
   useEffect(() => {
     if (!wantsMotion) return undefined;
@@ -58,6 +71,26 @@ export default function Pip({ children, mood = 'neutral', size = 'md', hintLevel
   const leader = useSyncExternalStore(motionStore.subscribe, motionStore.current, motionStore.current);
   const animated = wantsMotion && leader === uid;
 
+  const rootRef = useRef(null);
+  useEffect(() => {
+    const node = rootRef.current;
+    if (!node || frozen || !node.closest('.room-panel')) return undefined;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const drift = Math.sin((window.scrollY || 0) / 220) * 12;
+        node.style.setProperty('--pip-drift', `${drift.toFixed(2)}px`);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [frozen]);
+
   const art = getPipSvg(mood);
   const markup = useMemo(() => (art ? art.markup.split(INSTANCE_TOKEN).join(uid) : null), [art?.markup, uid]);
   const shownMood = art ? art.mood : 'legacy';
@@ -66,11 +99,14 @@ export default function Pip({ children, mood = 'neutral', size = 'md', hintLevel
   const classes = ['pip', `pip-${size}`, `pip-${MOOD_ALIASES[mood] || mood}`];
   if (frozen) classes.push('is-static');
   else if (!animated) classes.push('is-still');
+  if (summoned) classes.push('is-summoned');
+  if (dock) classes.push('is-docked');
   const style = hintLevel && BULB_GLOW[hintLevel] ? { '--bulb-glow': BULB_GLOW[hintLevel] } : undefined;
 
   return (
-    <div className={classes.join(' ')} data-mood={shownMood} data-pip-file={art?.name} style={style}>
+    <div ref={rootRef} className={classes.join(' ')} data-mood={shownMood} data-pip-file={art?.name} style={style}>
       <span className="pip-avatar" aria-hidden="true">
+        {summoned ? <span className="pip-summon" /> : null}
         <span className="pip-float">
           {markup ? (
             <span key={shownMood} className="pip-swap" dangerouslySetInnerHTML={{ __html: markup }} />

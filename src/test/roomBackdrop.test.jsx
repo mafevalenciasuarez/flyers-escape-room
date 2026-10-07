@@ -117,7 +117,7 @@ describe('Engine Room backdrop', () => {
     expect(scene.getAttribute('data-room')).toBe('room2');
     expect(scene.getAttribute('data-audio')).toBe('idle');
     expect(container.querySelector('svg')).toBeTruthy();
-    for (const id of ['engine-core-glow', 'screen-glow', 'indicator-light1', 'indicator-light2', 'indicator-light3']) {
+    for (const id of ['engine-core-glow', 'screen-glow', 'ceiling-lamp-glow', 'indicator-light1', 'indicator-light2', 'indicator-light3']) {
       expect(container.querySelector(`[data-st="${id}"]`)).toBeTruthy();
     }
     expect(container.textContent).not.toContain('MOON');

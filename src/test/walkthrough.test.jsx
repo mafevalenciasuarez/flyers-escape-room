@@ -150,7 +150,7 @@ describe('full game walkthrough', () => {
     playRoom3('easy');
     playRoom4();
     playRoom5();
-    expect(screen.getByText(/5 of 5 secret pieces/, { selector: '.my-pieces p' })).toBeTruthy();
+    expect(screen.getByText(/5 of 5 secret pieces/, { selector: '.pieces-text' })).toBeTruthy();
     playFinal();
 
     expect(screen.getByText(/You repaired the radio!/)).toBeTruthy();

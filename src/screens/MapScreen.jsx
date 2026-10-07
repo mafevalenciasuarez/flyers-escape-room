@@ -6,7 +6,6 @@ import { roomProgress } from '../state/selectors.js';
 import { claimCelebration, releaseClaim } from '../lib/stationVisit.js';
 import useReducedMotion from '../lib/useReducedMotion.js';
 import Icon from '../components/Icon.jsx';
-import PieceCard from '../components/PieceCard.jsx';
 import StationSvg, { usePointFractions } from '../components/StationSvg.jsx';
 import { Starfield } from '../components/Starfield.jsx';
 import { Es } from '../components/Bilingual.jsx';
@@ -74,7 +73,6 @@ export default function MapScreen() {
   const isStatic = reduced;
   const next = nextRoomId(state);
   const ready = allPiecesFound(state);
-  const found = ROOMS.filter((room) => state.pieces[room.id]);
   const doneIds = ROOMS.filter((room) => state.rooms[room.id]?.done).map((room) => room.id);
   const doneKey = doneIds.join(',');
 
@@ -174,7 +172,7 @@ export default function MapScreen() {
       el.removeEventListener('scroll', update);
       observer?.disconnect();
     };
-  }, [found.length]);
+  }, [doneKey]);
 
   const [transform, setTransform] = useState('translate(0px, 0px) scale(1)');
   useLayoutEffect(() => {
@@ -228,7 +226,6 @@ export default function MapScreen() {
           <ol className="map-cards">
             {ENTRIES.map((room, index) => {
               const done = !!state.rooms[room.gameId]?.done;
-              const started = !!state.rooms[room.gameId] && !done;
               const isNext = next === room.gameId;
               const isLocked = room.gameId === 'final' && !ready;
               const prevDone = index > 0 && !!state.rooms[ENTRIES[index - 1].gameId]?.done;
@@ -244,9 +241,6 @@ export default function MapScreen() {
               } else if (isNext) {
                 statusIcon = 'arrow';
                 statusKey = 'nextRoom';
-              } else if (started) {
-                statusIcon = 'circle';
-                statusKey = 'statusOpen';
               }
               return (
                 <li key={room.gameId} className={`room-card${done ? ' is-done' : ''}${isNext ? ' is-next' : ''}${isLocked ? ' is-locked' : ''}`}>
@@ -305,21 +299,6 @@ export default function MapScreen() {
               );
             })}
           </ol>
-          <div className="my-pieces">
-            <h2>
-              <Icon name="piece" /> {t('myPieces')}
-              <Es>{es('myPieces')}</Es>
-            </h2>
-            <p>
-              {t('piecesFound', { n: found.length })}
-              <Es>{es('piecesFound', { n: found.length })}</Es>
-            </p>
-            <div className="piece-row">
-              {found.map((room) => (
-                <PieceCard key={room.id} clue={room.clue} />
-              ))}
-            </div>
-          </div>
           </div>
           <div className="map-side-fade map-side-fade-top" aria-hidden="true" />
           <div className="map-side-fade map-side-fade-bottom" aria-hidden="true" />

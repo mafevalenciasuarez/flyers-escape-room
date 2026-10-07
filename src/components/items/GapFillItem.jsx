@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useGame } from '../../state/GameContext.jsx';
 import { normalizeAnswer, shuffle } from '../../lib/util.js';
 import Feedback from '../Feedback.jsx';
+import { playSfx } from '../../lib/sfx.js';
 import Icon from '../Icon.jsx';
 import { Button, Es, Instruction } from '../Bilingual.jsx';
 import { pulseReward } from '../../lib/roomFx.js';
@@ -74,6 +75,7 @@ export default function GapFillItem({ item, mode = item.mode || 'type', onDone, 
 
   const askHelp = () => {
     if (!helpGap) return;
+    playSfx('pip-help');
     setLevels((s) => ({ ...s, [helpGap]: Math.min(item.gaps[helpGap].hints.length, (s[helpGap] || 0) + 1) }));
     setCounts((c) => ({ ...c, helps: c.helps + 1 }));
   };

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { playSfx } from '../lib/sfx.js';
 
 // Graduated help: every wrong try or "Help, Pip!" press moves one step up the
 // ladder (max 3). The ladder never contains the answer itself.
@@ -14,6 +15,7 @@ export default function useHelp(hints = []) {
   }, [max]);
 
   const askHelp = useCallback(() => {
+    playSfx('pip-help');
     setHelps((h) => h + 1);
     setLevel((l) => Math.min(max, l + 1));
   }, [max]);

@@ -1,7 +1,7 @@
 /* Pip heads (src/assets/svg/pip). Only transform and opacity animate; filters are static. */
 .pip {
-  --pip-md-width: 84px;
-  --pip-sm-width: 52px;
+  --pip-md-width: 128px;
+  --pip-sm-width: 62px;
   --pip-float-y: -8px;
   --pip-float-dur: 3.8s;
   --pip-swap-dur: 180ms;
@@ -27,7 +27,32 @@
   --pip-dot-min: 0.35;
 }
 
-.pip-avatar { flex: none; display: block; width: var(--pip-md-width); }
+.pip-avatar {
+  position: relative;
+  flex: none;
+  display: block;
+  width: var(--pip-md-width);
+  filter:
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.9))
+    drop-shadow(0 0 10px rgba(245, 227, 168, 0.95))
+    drop-shadow(0 0 22px rgba(255, 203, 106, 0.8));
+}
+.pip-summon {
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(168, 245, 226, 0.75) 38%, rgba(80, 170, 255, 0) 72%);
+  opacity: 0;
+  animation: pip-summon 0.7s ease-out forwards;
+}
+.pip:not(.is-static):hover .pip-avatar {
+  filter:
+    drop-shadow(0 0 6px rgba(255, 255, 255, 1))
+    drop-shadow(0 0 16px rgba(245, 227, 168, 1))
+    drop-shadow(0 0 28px rgba(255, 203, 106, 0.95));
+}
+.pip-avatar { transition: filter 0.28s ease; }
 .pip-sm .pip-avatar { width: var(--pip-sm-width); }
 .pip-float, .pip-swap { display: block; }
 .pip-swap svg, .pip-legacy { display: block; width: 100%; height: auto; overflow: visible; }
@@ -55,6 +80,12 @@
 .pip:not(.is-static):not(.is-still) .pip-float {
   animation: pip-float var(--pip-float-dur) ease-in-out infinite;
 }
+.pip.is-summoned:not(.is-static):not(.is-still) .pip-float {
+  animation: pip-float var(--pip-float-dur) ease-in-out 0.7s infinite, pip-pop 0.7s ease-out;
+}
+.pip.is-summoned:not(.is-static).is-still .pip-float {
+  animation: pip-pop 0.7s ease-out;
+}
 .pip:not(.is-static):not(.is-still) [data-pip='eyes-mouth'] {
   animation: pip-face-breathe var(--pip-face-dur) ease-in-out infinite;
 }
@@ -75,6 +106,16 @@
 .pip:not(.is-static):not(.is-still) [data-pip='dot2'] { animation-delay: 0.2s; }
 .pip:not(.is-static):not(.is-still) [data-pip='dot3'] { animation-delay: 0.4s; }
 
+@keyframes pip-pop {
+  0% { opacity: 0; transform: scale(0.35); filter: brightness(2.6); }
+  40% { opacity: 1; transform: scale(1.12); filter: brightness(1.5); }
+  100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+@keyframes pip-summon {
+  0% { opacity: 0; transform: scale(0.2); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.7); }
+}
 @keyframes pip-swap {
   from { opacity: 0; transform: scale(var(--pip-swap-scale)); }
   to { opacity: 1; transform: scale(1); }
@@ -112,6 +153,7 @@
 /* Reduced motion: everything visible, nothing moves. */
 .pip.is-static .pip-float,
 .pip.is-static .pip-swap,
+.pip.is-static .pip-summon,
 .pip.is-static [data-pip],
 .pip.is-still .pip-float,
 .pip.is-still [data-pip] {
@@ -119,13 +161,16 @@
   opacity: 1;
   transform: none;
 }
+.pip.is-static .pip-summon { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .pip .pip-float,
   .pip .pip-swap,
+  .pip .pip-summon,
   .pip [data-pip] {
     animation: none !important;
     opacity: 1;
     transform: none;
   }
+  .pip .pip-summon { opacity: 0 !important; }
 }

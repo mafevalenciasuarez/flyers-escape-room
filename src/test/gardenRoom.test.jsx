@@ -129,7 +129,7 @@ describe('Rooms 1 and 2 and the intro star field', () => {
     expect(rooms[0].querySelector('[data-st="light-beam"]')).toBeNull();
     expect(rooms[1].querySelector('.starfield')).toBeNull();
     expect(rooms[1].querySelector('[data-st="engine-core-glow"]')).toBeTruthy();
-    expect(rooms[1].querySelector('[data-st="ceiling-lamp-glow"]')).toBeNull();
+    expect(rooms[1].querySelector('[data-st="ceiling-lamp-glow"]')).toBeTruthy();
   });
 });
 

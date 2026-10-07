@@ -1,6 +1,6 @@
 import { useGame } from '../state/GameContext.jsx';
 import Modal from './Modal.jsx';
-import { Button, Es } from './Bilingual.jsx';
+import { Es } from './Bilingual.jsx';
 
 function Choice({ legend, legendEs, options, value, onChange, name }) {
   return (
@@ -78,9 +78,6 @@ export default function SettingsPanel({ onClose }) {
         <Toggle label={t('calm')} labelEs={es('calm')} help={t('calmHelp')} value={s.calm} onChange={set('calm')} />
         <Toggle label={t('sounds')} labelEs={es('sounds')} value={s.sounds} onChange={set('sounds')} />
         <Toggle label={t('spanish')} value={s.spanish} onChange={set('spanish')} />
-      </div>
-      <div className="modal-actions">
-        <Button icon="check" en={t('close')} es={es('close')} onClick={onClose} />
       </div>
     </Modal>
   );

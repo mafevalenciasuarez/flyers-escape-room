@@ -64,13 +64,11 @@
 .room-backdrop[data-room='room1'].is-static[data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-glow-on); }
 .room-backdrop[data-room='room1'].is-static[data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
 
-/* Room 2. Opacity only. The cabinet screen stays a faint glow and never shows a word. */
+/* Room 2. Opacity only. The cabinet screen glows and never shows a word. */
 .room-backdrop[data-room='room2'] [data-st='engine-core-glow'] { opacity: var(--core-idle); }
 .room-backdrop[data-room='room2'] [data-st^='indicator-light'] { opacity: var(--light-idle); }
-.room-backdrop[data-room='room2'] [data-st='screen-glow'] {
-  opacity: var(--screen-glow-opacity);
-  animation: none;
-}
+.room-backdrop[data-room='room2'] [data-st='screen-glow'] { opacity: var(--screen-idle); }
+.room-backdrop[data-room='room2'] [data-st='ceiling-lamp-glow'] { opacity: var(--lamp-idle); }
 
 .room-backdrop[data-room='room2']:not(.is-static) [data-st='engine-core-glow'] {
   animation: core-breathe var(--core-breathe) ease-in-out infinite;
@@ -86,6 +84,12 @@
   animation: light-breathe var(--breathe-dur) ease-in-out infinite both;
   animation-delay: calc(var(--breathe-step) * 2);
 }
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='screen-glow'] {
+  animation: screen-breathe var(--screen-breathe) ease-in-out infinite;
+}
+.room-backdrop[data-room='room2']:not(.is-static) [data-st='ceiling-lamp-glow'] {
+  animation: lamp-breathe var(--lamp-breathe) ease-in-out infinite;
+}
 
 .room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='engine-core-glow'] {
   animation: core-rise var(--core-rise) ease forwards, core-pulse var(--core-pulse) ease-in-out var(--core-rise) infinite alternate;
@@ -98,12 +102,12 @@
 .room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light2'] { animation-delay: var(--seq-step); }
 .room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='indicator-light3'] { animation-delay: calc(var(--seq-step) * 2); }
 .room-backdrop[data-room='room2']:not(.is-static)[data-audio='playing'] [data-st='screen-glow'] {
-  opacity: var(--screen-glow-opacity);
-  animation: none;
+  animation: engine-screen-wake var(--screen-rise) ease forwards, engine-screen-pulse var(--screen-pulse) ease-in-out var(--screen-rise) infinite alternate;
 }
 
 .room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st='engine-core-glow'],
-.room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st^='indicator-light'] {
+.room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st^='indicator-light'],
+.room-backdrop[data-room='room2']:not([data-audio='playing']) [data-st='screen-glow'] {
   transition: opacity var(--return-dur) ease;
 }
 
@@ -115,10 +119,11 @@
 }
 .room-backdrop[data-room='room2'].is-static [data-st='engine-core-glow'] { opacity: var(--still-core); }
 .room-backdrop[data-room='room2'].is-static [data-st='screen-glow'] { opacity: var(--still-screen); }
+.room-backdrop[data-room='room2'].is-static [data-st='ceiling-lamp-glow'] { opacity: var(--still-lamp); }
 .room-backdrop[data-room='room2'].is-static [data-st^='indicator-light'] { opacity: var(--still-light); }
 .room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st='engine-core-glow'] { opacity: var(--still-core-on); }
 .room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
-.room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+.room-backdrop[data-room='room2'].is-static[data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen-on); }
 
 /* Room 3. Opacity only. Stars sit behind the SVG, inside this fixed box. */
 .room-backdrop[data-room='room3'] {
@@ -304,6 +309,8 @@
   0%, 100% { opacity: var(--screen-low); }
   50% { opacity: var(--screen-high); }
 }
+@keyframes engine-screen-wake { from { opacity: var(--screen-high); } to { opacity: var(--screen-pulse-high); } }
+@keyframes engine-screen-pulse { from { opacity: var(--screen-pulse-low); } to { opacity: var(--screen-pulse-high); } }
 @keyframes glass-shimmer {
   0%, 100% { opacity: var(--glass-low); }
   50% { opacity: var(--glass-high); }
@@ -334,10 +341,11 @@
   .room-backdrop[data-room='room1'][data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
   .room-backdrop[data-room='room2'] [data-st='engine-core-glow'] { opacity: var(--still-core); }
   .room-backdrop[data-room='room2'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+  .room-backdrop[data-room='room2'] [data-st='ceiling-lamp-glow'] { opacity: var(--still-lamp); }
   .room-backdrop[data-room='room2'] [data-st^='indicator-light'] { opacity: var(--still-light); }
   .room-backdrop[data-room='room2'][data-audio='playing'] [data-st='engine-core-glow'] { opacity: var(--still-core-on); }
   .room-backdrop[data-room='room2'][data-audio='playing'] [data-st^='indicator-light'] { opacity: var(--still-light-on); }
-  .room-backdrop[data-room='room2'][data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen); }
+  .room-backdrop[data-room='room2'][data-audio='playing'] [data-st='screen-glow'] { opacity: var(--still-screen-on); }
   .room-backdrop[data-room='room3'] [data-st='ceiling-lamp-glow'] { opacity: var(--lamp-idle); }
   .room-backdrop[data-room='room3'] [data-st='light-beam'] { opacity: var(--beam-idle); }
   .room-backdrop[data-room='room3'][data-audio='playing'] [data-st='ceiling-lamp-glow'] { opacity: var(--lamp-on); }

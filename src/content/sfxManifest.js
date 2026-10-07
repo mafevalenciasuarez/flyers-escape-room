@@ -6,4 +6,5 @@ export const sfxManifest = [
   { id: 'room-end', file: 'room-end-screen.mp3', volume: 0.8 },
   { id: 'hyperspace', file: 'hyperspace-jump.mp3', volume: 0.85 },
   { id: 'station-in', file: 'station-zoom.mp3', volume: 0.85 },
+  { id: 'pip-help', file: 'pip-help.mp3', volume: 0.9 },
 ];
