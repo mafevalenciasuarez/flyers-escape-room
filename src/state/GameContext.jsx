@@ -1,26 +1,77 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { gameReducer, initialState, settingsFromSaved } from './gameReducer.js';
 import { loadSaved, save } from './storage.js';
-import { GAME_MINUTES, ROOM_BY_ID, uiEn, uiEs } from '../content/index.js';
+import { GAME_MINUTES, ROOM_BY_ID, ROOMS, uiEn, uiEs } from '../content/index.js';
 import { fill } from '../lib/util.js';
 import { configureSfx, playRoomEnd, playSfx, preloadSfx, resetSfxSession } from '../lib/sfx.js';
 
 const GameContext = createContext(null);
 const GAME_MS = GAME_MINUTES * 60 * 1000;
 
+// Dev only: http://localhost:5173/?dev=radio opens the Radio Room with every
+// secret piece already found, on the placing step. The published build drops this.
+function devRadioState() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('dev') !== 'radio') return null;
+  const now = Date.now();
+  const pieces = {};
+  const rooms = {};
+  for (const room of ROOMS) {
+    pieces[room.id] = true;
+    rooms[room.id] = {
+      phase: 'intro',
+      itemIndex: room.items.length,
+      results: {},
+      variants: {},
+      path: null,
+      mode: null,
+      startedAt: now,
+      finishedAt: now,
+      done: true,
+    };
+  }
+  rooms.final = {
+    phase: 'place',
+    itemIndex: 0,
+    results: {},
+    variants: {},
+    path: null,
+    mode: null,
+    startedAt: now,
+    finishedAt: null,
+    done: false,
+  };
+  return {
+    ...initialState(),
+    screen: 'final',
+    currentRoom: 'final',
+    startedAt: now,
+    pieces,
+    rooms,
+    devShortcut: true,
+  };
+}
+
 export function GameProvider({ children, initial, now = () => Date.now() }) {
   const [saved] = useState(() => (initial ? null : loadSaved()));
   const [state, dispatch] = useReducer(
     gameReducer,
     undefined,
-    () => initial || initialState(settingsFromSaved(saved?.settings))
+    () => {
+      if (initial) return initial;
+      if (import.meta.env.DEV) {
+        const jump = devRadioState();
+        if (jump) return jump;
+      }
+      return initialState(settingsFromSaved(saved?.settings));
+    }
   );
   const [clock, setClock] = useState(now());
   const nowRef = useRef(now);
   nowRef.current = now;
 
   useEffect(() => {
-    if (state.screen !== 'welcome') save(state);
+    if (state.screen !== 'welcome' && !state.devShortcut) save(state);
   }, [state]);
 
   useEffect(() => {

@@ -5,6 +5,8 @@ import { initialState } from '../state/gameReducer.js';
 import RoomBackdrop from '../components/RoomBackdrop.jsx';
 import SpaceBackdrop from '../components/SpaceBackdrop.jsx';
 import RadioRoomScreen from '../screens/RadioRoomScreen.jsx';
+import RoomScreen from '../screens/RoomScreen.jsx';
+import PrizeGlyph from '../components/PrizeGlyph.jsx';
 import OrderItem from '../components/items/OrderItem.jsx';
 import DilemmaItem from '../components/items/DilemmaItem.jsx';
 import PostcardItem from '../components/items/PostcardItem.jsx';
@@ -13,10 +15,13 @@ import room4 from '../content/room4.js';
 import room5 from '../content/room5.js';
 import room3 from '../content/room3.js';
 import { FINAL } from '../content/index.js';
+import App from '../App.jsx';
 
 const originalMatchMedia = window.matchMedia;
 
 afterEach(() => {
+  window.history.replaceState(null, '', '/');
+  window.sessionStorage.clear();
   window.matchMedia = originalMatchMedia;
   cleanup();
 });
@@ -191,5 +196,56 @@ describe('Science, Robot and Radio backdrops', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Hello' } });
     fireEvent.click(screen.getByRole('button', { name: /Answer/i }));
     expect(plays.some((src) => src.includes('answer-error'))).toBe(false);
+  });
+
+  it('shows Pip beside an intro only when Pip speaks that clip', () => {
+    const pipIntro = render(
+      <GameProvider initial={withRoom('room3', { phase: 'intro' })}>
+        <RoomScreen />
+      </GameProvider>
+    );
+    expect(pipIntro.container.querySelector('.intro-speaker .pip')).toBeTruthy();
+    cleanup();
+
+    const science = render(
+      <GameProvider initial={withRoom('room4', { phase: 'intro' })}>
+        <RoomScreen />
+      </GameProvider>
+    );
+    expect(science.container.querySelector('.intro-speaker .pip')).toBeTruthy();
+    cleanup();
+
+    const helen = render(
+      <GameProvider initial={withRoom('room1', { phase: 'intro' })}>
+        <RoomScreen />
+      </GameProvider>
+    );
+    expect(helen.container.querySelector('.intro-speaker .pip')).toBeNull();
+  });
+
+  it('shows a drawn medal for every prize that has a badge file', () => {
+    const { container } = render(
+      <>
+        <PrizeGlyph prize={{ id: 'great-ears', icon: 'ear' }} />
+        <PrizeGlyph prize={{ id: 'careful-eyes', icon: 'eye' }} />
+        <PrizeGlyph prize={{ id: 'garden-star', icon: 'star' }} />
+        <PrizeGlyph prize={{ id: 'kind-and-fair', icon: 'heart' }} />
+        <PrizeGlyph prize={{ id: 'radio-engineer', icon: 'radio' }} />
+        <PrizeGlyph prize={{ id: 'word-engineer', icon: 'gear' }} />
+      </>
+    );
+    expect(container.querySelectorAll('.prize-badge')).toHaveLength(6);
+    expect(container.querySelectorAll('.icon')).toHaveLength(0);
+  });
+
+  it('opens the Radio Room from the dev shortcut with every piece ready to place', () => {
+    window.history.replaceState(null, '', '/?dev=radio');
+    window.sessionStorage.clear();
+    render(<App />);
+    expect(screen.getByRole('heading', { name: /Radio Room/ })).toBeTruthy();
+    expect(screen.getByText(/5 of 5 secret pieces/)).toBeTruthy();
+    expect(document.querySelectorAll('[data-piece]')).toHaveLength(5);
+    expect(window.sessionStorage.getItem('radio-silence-v1')).toBeNull();
+    window.history.replaceState(null, '', '/');
   });
 });

@@ -76,6 +76,11 @@ const requiredSvg = [
   'medal-silver.svg',
   'medal-gold.svg',
   'badge-garden-star.svg',
+  'badge-great-ears.svg',
+  'badge-careful-eyes.svg',
+  'badge-kind-and-fair.svg',
+  'badge-radio-engineer.svg',
+  'badge-word-engineer.svg',
   'stamp-earth.svg',
   'postmark.svg',
 ];

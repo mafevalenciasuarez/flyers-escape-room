@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ROOM_BY_ID, imageById } from '../content/index.js';
+import { ROOM_BY_ID, audioById, imageById } from '../content/index.js';
 import { asset } from '../lib/util.js';
 import { useGame } from '../state/GameContext.jsx';
 import { pointsFor } from '../state/scoring.js';
 import AudioPlayer from '../components/AudioPlayer.jsx';
+import Pip from '../components/Pip.jsx';
 import RoomBackdrop from '../components/RoomBackdrop.jsx';
 import { roomBackdrop } from '../lib/roomBackdrops.js';
 import Icon from '../components/Icon.jsx';
@@ -129,7 +130,10 @@ export default function RoomScreen() {
         <Icon name={room.icon} size={64} />
         <Instruction icon="arrow" en={room.intro} es={room.introEs} />
         {room.introAudio ? (
-          <AudioPlayer clipId={room.introAudio} unlimited label={room.name} onPlayingChange={watchAudio(room.introAudio)} />
+          <div className="intro-speaker">
+            {String(audioById[room.introAudio]?.speaker || '').startsWith('Pip') ? <Pip mood="happy" /> : null}
+            <AudioPlayer clipId={room.introAudio} unlimited label={room.name} onPlayingChange={watchAudio(room.introAudio)} />
+          </div>
         ) : null}
         <Button icon="arrow" en={t('start')} es={es('start')} className="btn-big" onClick={() => dispatch({ type: 'SET_PHASE', roomId, phase: startPhase })} />
       </div>

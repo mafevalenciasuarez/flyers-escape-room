@@ -29,7 +29,11 @@ export function usePointFractions(hostRef) {
           y: (box.y + box.height / 2) / vb.height,
         };
       }
-      setPoints(next);
+      setPoints((prev) => {
+        const keys = Object.keys(next);
+        const same = keys.length === Object.keys(prev).length && keys.every((key) => prev[key] && prev[key].x === next[key].x && prev[key].y === next[key].y);
+        return same ? prev : next;
+      });
     };
     measure();
     const onResize = () => {

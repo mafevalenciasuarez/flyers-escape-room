@@ -141,7 +141,7 @@ afterEach(() => {
 });
 
 describe('full game walkthrough', () => {
-  it('reaches the end screen with correct answers in every room', () => {
+  it('reaches the end screen with correct answers in every room', async () => {
     render(<App />);
     expect(screen.getByText(/Hello, Cadet!/)).toBeTruthy();
     clickText(/^Start/);
@@ -154,8 +154,9 @@ describe('full game walkthrough', () => {
     playFinal();
 
     expect(screen.getByText(/You repaired the radio!/)).toBeTruthy();
+    clickText(/^Next/);
     // 15 items, all right the first time = 10 points each
-    expect(screen.getByText('150')).toBeTruthy();
+    expect(await screen.findByText('150')).toBeTruthy();
     expect(screen.getByText(/haven't got any words to look at again/)).toBeTruthy();
     const skills = screen.getByText('Listening').closest('ul');
     expect(within(skills).getByText(/5 of 5 right the first time/)).toBeTruthy();
